@@ -9,9 +9,9 @@ xls 와 xlsx를 모두 지원함.
 1. Maven 명령어를 이용해 .m2 Repository 에 Excel-1.0.0.jar 를 설치(저장)합니다.<pre>mvn install:install-file -Dfile=C:\Excel-1.0.0.jar -DgroupId=io.github.seccoding -DartifactId=Excel -Dversion=1.0.0 -Dpackaging=jar</pre>
 1. 본인의 Project/pom.xml 에 dependency를 추가합니다.<pre>
 	&lt;dependency&gt;
-		&lt;groupId&gt;io.github.seccoding&lt;/groupId&gt;
-		&lt;artifactId&gt;Excel&lt;/artifactId&gt;
-		&lt;version&gt;1.0.0&lt;/version&gt;
+	&nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;io.github.seccoding&lt;/groupId&gt;
+	&nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;Excel&lt;/artifactId&gt;
+	&nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;1.0.0&lt;/version&gt;
 	&lt;/dependency&gt;
 </pre>
 
