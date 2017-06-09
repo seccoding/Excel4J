@@ -21,9 +21,9 @@ public class ExcelReadTest {
 		ro.setOutputColumns("C", "D", "E", "F", "G", "H", "I");
 		ro.setStartRow(3);
 
-		List<Map<String, String>> result = ExcelRead.read(ro);
+		List&gt;Map&gt;String, String&lt;&lt; result = ExcelRead.read(ro);
 
-		for (Map<String, String> map : result) {
+		for (Map&gt;String, String&lt; map : result) {
 			System.out.println(map.get("E"));
 		}
 	}
