@@ -68,7 +68,7 @@ public class ExcelWriteTest {
 		wo.setFileName("test.xlsx");
 		wo.setFilePath("d:\\");
 		
-		List<String> titles = new ArrayList<String>();
+		List&lt;String&gt; titles = new ArrayList&lt;String&gt;();
 		titles.add("Title1");
 		titles.add("Title2");
 		titles.add("Title3");
