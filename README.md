@@ -7,9 +7,7 @@ xls 와 xlsx를 모두 지원함.
 ### maven dependency에 Excel-1.0.0.jar 파일을 추가할 경우
 1. Excel-1.0.0.jar파일을 C:\에 복사합니다.
 1. Maven 명령어를 이용해 .m2 Repository 에 Excel-1.0.0.jar 를 설치(저장)합니다.
-1. <pre>
-	mvn install:install-file -Dfile=C:\Excel-1.0.0.jar -DgroupId=io.github.seccoding -DartifactId=Excel -Dversion=1.0.0 -Dpackaging=jar
-</pre>
+1. <pre>mvn install:install-file -Dfile=C:\Excel-1.0.0.jar -DgroupId=io.github.seccoding -DartifactId=Excel -Dversion=1.0.0 -Dpackaging=jar</pre>
 1. 본인의 Project/pom.xml 에 dependency를 추가합니다.
 1. <pre>
 	&lt;dependency&gt;
