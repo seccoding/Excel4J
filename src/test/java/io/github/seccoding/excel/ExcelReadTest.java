@@ -11,7 +11,7 @@ public class ExcelReadTest {
 	public static void main(String[] args) {
 
 		ReadOption ro = new ReadOption();
-		ro.setFilePath("/Users/mcjang/ktest/uploadedFile/practiceTest.xlsx");
+		ro.setFilePath("/Users/minchangjang/Desktop/test.xlsx");
 		ro.setOutputColumns("C", "D", "E", "F", "G", "H", "I");
 		ro.setStartRow(3);
 
