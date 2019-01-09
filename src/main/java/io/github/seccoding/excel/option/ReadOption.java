@@ -17,6 +17,11 @@ public class ReadOption {
 	private String filePath;
 	
 	/**
+	 * 읽어올 Excel 시트 이름
+	 */
+	private String sheetName;
+	
+	/**
 	 * Excel에서 읽어올 Column.
 	 */
 	private List<String> outputColumns;
@@ -42,6 +47,22 @@ public class ReadOption {
 		this.filePath = filePath;
 	}
 	
+	/**
+	 * 읽어올 Excel 파일의 시트 이름을 가져온다.
+	 * @return
+	 */
+	public String getSheetName() {
+		return sheetName;
+	}
+
+	/**
+	 * 읽어올 Excel 파일의 시트 이름을 지정한다.
+	 * @param sheetName
+	 */
+	public void setSheetName(String sheetName) {
+		this.sheetName = sheetName;
+	}
+
 	/**
 	 * Excel에서 읽어올 Column을 가져온다.
 	 * @return List<String> Excel에서 읽어올 Column

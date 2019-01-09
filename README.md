@@ -4,14 +4,14 @@ xls 와 xlsx를 모두 지원함.
 
 
 ## 사용 방법
-### maven dependency에 Excel-1.0.0.jar 파일을 추가할 경우
-1. Excel-1.0.0.jar파일을 C:\에 복사합니다.
-1. Maven 명령어를 이용해 .m2 Repository 에 Excel-1.0.0.jar 를 설치(저장)합니다.<pre>mvn install:install-file -Dfile=C:\Excel-1.0.0.jar -DgroupId=io.github.seccoding -DartifactId=Excel -Dversion=1.0.0 -Dpackaging=jar</pre>
+### maven dependency에 Excel-1.1.0.jar 파일을 추가할 경우
+1. Excel-1.1.0.jar파일을 C:\에 복사합니다.
+1. Maven 명령어를 이용해 .m2 Repository 에 Excel-1.1.0.jar 를 설치(저장)합니다.<pre>mvn install:install-file -Dfile=C:\Excel-1.1.0.jar -DgroupId=io.github.seccoding -DartifactId=Excel -Dversion=1.1.0 -Dpackaging=jar</pre>
 1. 본인의 Project/pom.xml 에 dependency를 추가합니다.<pre>
 	&lt;dependency&gt;
 	&nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;io.github.seccoding&lt;/groupId&gt;
 	&nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;Excel&lt;/artifactId&gt;
-	&nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;1.0.0&lt;/version&gt;
+	&nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;1.1.0&lt;/version&gt;
 	&lt;/dependency&gt;
 </pre>
 
@@ -23,29 +23,85 @@ xls 와 xlsx를 모두 지원함.
 ---
 ## Excel File 읽기
 <pre>
+package io.github.seccoding.excel;
+
 import java.util.List;
 import java.util.Map;
 
+import io.github.seccoding.excel.annotations.Field;
+import io.github.seccoding.excel.annotations.Require;
 import io.github.seccoding.excel.option.ReadOption;
 import io.github.seccoding.excel.read.ExcelRead;
 
 public class ExcelReadTest {
 
+	static ReadOption ro = new ReadOption();
+
 	public static void main(String[] args) {
 
-		ReadOption ro = new ReadOption();
-		ro.setFilePath("/Users/mcjang/ktest/uploadedFile/excelFile.xlsx");
-		ro.setOutputColumns("C", "D", "E", "F", "G", "H", "I");
-		ro.setStartRow(3);
+		ro.setFilePath("C:\\Users\\mcjan\\Desktop\\ktds Table Descriptor.xlsx");
+		ro.setOutputColumns("B", "C", "F");
+		ro.setStartRow(7);
+		ro.setSheetName("ADMIN");
+		
+		test1();
+		test2();
+	}
 
-		List&lt;Map&lt;String, String&gt;&gt; result = ExcelRead.read(ro);
+	public static void test1() {
+		Map&lt;String, String> result = new ExcelRead&lt;>().read(ro);
 
-		for (Map&lt;String, String&gt; map : result) {
-			System.out.println(map.get("E"));
+		System.out.println(result);
+	}
+
+	public static void test2() {
+		TestClass result = new ExcelRead&lt;TestClass>().readToObject(ro, TestClass.class);
+
+		System.out.println(result.getNo());
+		System.out.println(result.getColumnName());
+		System.out.println(result.getType());
+	}
+
+	public static class TestClass {
+
+		@Field("B")
+		@Require // 값이 항상 존재하는 컬럼을 지정. 탐색 ROW를 지정할 때 사용.
+		private List&lt;String> no;
+		
+		@Field("C")
+		private List&lt;String> columnName;
+		
+		@Field("F")
+		private List&lt;String> type;
+
+		public List&lt;String> getNo() {
+			return no;
 		}
+
+		public void setNo(List&lt;String> no) {
+			this.no = no;
+		}
+
+		public List&lt;String> getColumnName() {
+			return columnName;
+		}
+
+		public void setColumnName(List&lt;String> columnName) {
+			this.columnName = columnName;
+		}
+
+		public List&lt;String> getType() {
+			return type;
+		}
+
+		public void setType(List&lt;String> type) {
+			this.type = type;
+		}
+
 	}
 
 }
+
 </pre>
 
 ---
