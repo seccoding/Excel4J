@@ -12,6 +12,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellReference;
 
 import io.github.seccoding.excel.annotations.Require;
 import io.github.seccoding.excel.option.ReadOption;
@@ -60,6 +61,12 @@ public class ExcelRead<T> {
 	private int numOfRows;
 	private int numOfCells;
 	
+	private Row row;
+	private Cell cell;
+	
+	private String cellName;
+	
+	
 	/**
 	 * 엑셀 파일을 읽어옴
 	 * @param readOption
@@ -68,37 +75,14 @@ public class ExcelRead<T> {
 	public Map<String, String> read(ReadOption readOption) {
 		
 		setup(readOption.getFilePath(), readOption.getSheetName());
+		final Map<String, String> map = new HashMap<String, String>();
 		
-		Row row = null;
-		Cell cell = null;
-		
-		String cellName = "";
-		
-		Map<String, String> map = new HashMap<String, String>();
-		
-		for(int rowIndex = readOption.getStartRow() - 1; rowIndex < numOfRows; rowIndex++) {
-			
-			row = sheet.getRow(rowIndex);
-			
-			if(row != null) {
-				numOfCells = row.getPhysicalNumberOfCells();
+		makeData(readOption, new AddData() {
+			@Override
+			public void pushData(int rowIndex) {
+				map.put(cellName + (rowIndex + 1), CellRef.getValue(cell));
 				
-				for(int cellIndex = 0; cellIndex < numOfCells; cellIndex++) {
-					
-					cell = row.getCell(cellIndex);
-					cellName = CellRef.getName(cell, cellIndex);
-					
-					if( !readOption.getOutputColumns().contains(cellName) ) {
-						continue;
-					}
-					
-					map.put(cellName + (rowIndex + 1), CellRef.getValue(cell));
-				}
-				
-			}
-			
-		}
-		
+			}});
 		return map;
 		
 	}
@@ -111,41 +95,30 @@ public class ExcelRead<T> {
 	public T readToObject(ReadOption readOption, Class<?> claz) {
 		
 		setup(readOption.getFilePath(), readOption.getSheetName());
-		
-		Row row = null;
-		Cell cell = null;
-		
-		String cellName = "";
-		
 		createResultInstance(claz);
 		
-		for(int rowIndex = readOption.getStartRow() - 1; rowIndex < numOfRows; rowIndex++) {
-			
-			row = sheet.getRow(rowIndex);
-			
-			if(row != null) {
-				numOfCells = row.getPhysicalNumberOfCells();
-				
-				for(int cellIndex = 0; cellIndex < numOfCells; cellIndex++) {
-					
-					cell = row.getCell(cellIndex);
-					cellName = CellRef.getName(cell, cellIndex);
-					
-					if( !readOption.getOutputColumns().contains(cellName) ) {
-						continue;
-					}
-					boolean isKeepGoing = addData(t, cellName, rowIndex + 1, CellRef.getValue(cell));
-					if ( !isKeepGoing ) {
-						return t;
-					}
+		makeData(readOption, new AddData() {
+			@Override
+			public void pushData(int rowIndex) {
+				boolean isKeepGoing = addData(t, cellName, rowIndex + 1, CellRef.getValue(cell));
+				if ( !isKeepGoing ) {
+					return;
 				}
-				
 			}
-			
-		}
+		});
 		
 		return t;
 		
+	}
+	
+	public String getValue(ReadOption readOption, String cellName) {
+		setup(readOption.getFilePath(), readOption.getSheetName());
+		
+		CellReference cr = new CellReference(cellName);
+		row = sheet.getRow(cr.getRow());
+		cell = row.getCell(cr.getCol());
+		
+		return CellRef.getValue(cell);
 	}
 	
 	private void setup(String filePath, String sheetName) {
@@ -187,13 +160,44 @@ public class ExcelRead<T> {
 		}
 	}
 	
+	private interface AddData {
+		public void pushData(int rowIndex);
+	}
+	
+	private void makeData(ReadOption readOption, AddData addData) {
+		for(int rowIndex = readOption.getStartRow() - 1; rowIndex < numOfRows; rowIndex++) {
+			
+			row = sheet.getRow(rowIndex);
+			
+			if(row != null) {
+				numOfCells = row.getPhysicalNumberOfCells();
+				
+				for(int cellIndex = 0; cellIndex < numOfCells; cellIndex++) {
+					
+					cell = row.getCell(cellIndex);
+					cellName = CellRef.getName(cell, cellIndex);
+					
+					if( !readOption.getOutputColumns().contains(cellName) ) {
+						continue;
+					}
+					
+					if ( addData != null ) {
+						addData.pushData(rowIndex);
+					}
+					
+				}
+				
+			}
+			
+		}
+	}
+	
 	private boolean addData(T t, String columnName, int rowNum, String value) {
 		Field[] fields = t.getClass().getDeclaredFields();
 			
 		for (Field field : fields) {
 			if ( field.isAnnotationPresent(Require.class) ) {
 				if ( value == null || value.length() == 0 ) {
-					System.out.println(columnName + " " + rowNum + "- NULL~");
 					return false;
 				}
 			}

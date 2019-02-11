@@ -14,28 +14,37 @@ public class ExcelReadTest {
 
 	public static void main(String[] args) {
 
-		ro.setFilePath("C:\\Users\\mcjan\\Desktop\\ktds Table Descriptor.xlsx");
-		ro.setOutputColumns("B", "C", "F");
+		ro.setFilePath("excel_file_path_with_file_name");
+		ro.setOutputColumns("B");
 		ro.setStartRow(7);
-		ro.setSheetName("ADMIN");
+		ro.setSheetName("Sheet1");
 		
 		
 		test1();
 		test2();
+		test3();
 	}
 
 	public static void test1() {
+		System.out.println("test1");
 		Map<String, String> result = new ExcelRead().read(ro);
 
 		System.out.println(result);
 	}
 
 	public static void test2() {
+		System.out.println("test2");
 		TestClass result = new ExcelRead<TestClass>().readToObject(ro, TestClass.class);
-
+		
 		System.out.println(result.getNo());
 		System.out.println(result.getColumnName());
 		System.out.println(result.getType());
+	}
+	
+	public static void test3() {
+		System.out.println("test3");
+		String result = new ExcelRead().getValue(ro, "B3");
+		System.out.println(result);
 	}
 
 	public static class TestClass {

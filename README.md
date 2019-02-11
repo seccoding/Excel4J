@@ -4,14 +4,14 @@ xls 와 xlsx를 모두 지원함.
 
 
 ## 사용 방법
-### maven dependency에 Excel-1.1.0.jar 파일을 추가할 경우
-1. Excel-1.1.0.jar파일을 C:\에 복사합니다.
-1. Maven 명령어를 이용해 .m2 Repository 에 Excel-1.1.0.jar 를 설치(저장)합니다.<pre>mvn install:install-file -Dfile=C:\Excel-1.1.0.jar -DgroupId=io.github.seccoding -DartifactId=Excel -Dversion=1.1.0 -Dpackaging=jar</pre>
+### maven dependency에 Excel-1.1.1.jar 파일을 추가할 경우
+1. Excel-1.1.1.jar파일을 C:\에 복사합니다.
+1. Maven 명령어를 이용해 .m2 Repository 에 Excel-1.1.1.jar 를 설치(저장)합니다.<pre>mvn install:install-file -Dfile=C:\Excel-1.1.1.jar -DgroupId=io.github.seccoding -DartifactId=Excel -Dversion=1.1.1 -Dpackaging=jar</pre>
 1. 본인의 Project/pom.xml 에 dependency를 추가합니다.<pre>
 	&lt;dependency&gt;
 	&nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;io.github.seccoding&lt;/groupId&gt;
 	&nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;Excel&lt;/artifactId&gt;
-	&nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;1.1.0&lt;/version&gt;
+	&nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;1.1.1&lt;/version&gt;
 	&lt;/dependency&gt;
 </pre>
 
@@ -39,13 +39,14 @@ public class ExcelReadTest {
 
 	public static void main(String[] args) {
 
-		ro.setFilePath("C:\\Users\\mcjan\\Desktop\\ktds Table Descriptor.xlsx");
-		ro.setOutputColumns("B", "C", "F");
+		ro.setFilePath("excel_file_path_with_file_name");
+		ro.setOutputColumns("B");
 		ro.setStartRow(7);
-		ro.setSheetName("ADMIN");
+		ro.setSheetName("Sheet1");
 		
 		test1();
 		test2();
+		test3();
 	}
 
 	public static void test1() {
@@ -60,6 +61,12 @@ public class ExcelReadTest {
 		System.out.println(result.getNo());
 		System.out.println(result.getColumnName());
 		System.out.println(result.getType());
+	}
+	
+	public static void test3() {
+		System.out.println("test3");
+		String result = new ExcelRead().getValue(ro, "B3");
+		System.out.println(result);
 	}
 
 	public static class TestClass {
