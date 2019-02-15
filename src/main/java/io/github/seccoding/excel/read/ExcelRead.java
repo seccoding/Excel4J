@@ -45,7 +45,7 @@ import io.github.seccoding.excel.read.util.FileType;
 	
 	// src.test.java.io.github.seccoding.excel.ExcelReadTest.java 참고하세요.
 </pre>
- * @author Minchang Jang (mc.jang@hucloud.co.kr)
+ * @author Minchang Jang (mcjang1116@gmail.com)
  */
 public class ExcelRead<T> {
 	

@@ -7,7 +7,7 @@ import java.util.List;
  * Excel(xls, xlsx) 파일을 읽을 때, 필요한 옵션을 정의한다. 
  * 여기에 정의된 옵션들을 사용해서 실제 파일을 읽어 온다.
  * 
- * @author Minchang Jang (mc.jang@hucloud.co.kr)
+ * @author Minchang Jang (mcjang1116@gmail.com)
  */
 public class ReadOption {
 

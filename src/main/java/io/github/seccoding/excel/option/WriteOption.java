@@ -25,7 +25,7 @@ import java.util.List;
 	contents.add(new String[]{"111", "222", "333"});
 	wo.setContents(contents);
 </pre>
- * @author Minchang Jang (mc.jang@hucloud.co.kr)
+ * @author Minchang Jang (mcjang1116@gmail.com)
  *
  */
 public class WriteOption {

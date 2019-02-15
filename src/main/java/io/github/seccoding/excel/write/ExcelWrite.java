@@ -35,7 +35,7 @@ import io.github.seccoding.excel.write.util.FileType;
 	
 	File excelFile = ExcelWrite.write(wo);
 </pre>
- * @author Minchang Jang (mc.jang@hucloud.co.kr)
+ * @author Minchang Jang (mcjang1116@gmail.com)
  */
 public class ExcelWrite {
 
