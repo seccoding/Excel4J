@@ -144,11 +144,6 @@ public class ExcelRead<T> {
 		sheet = wb.getSheet(sheetName);
 	}
 	
-	private void setNumOfRowsAndCells() {
-		numOfRows = sheet.getPhysicalNumberOfRows();
-		numOfCells = 0;
-	}
-	
 	private T createResultInstance(Class<?> claz) {
 		try {
 			this.t = (T) claz.newInstance();
@@ -158,6 +153,11 @@ public class ExcelRead<T> {
 		} catch (IllegalAccessException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
+	}
+	
+	private void setNumOfRowsAndCells() {
+		numOfRows = sheet.getPhysicalNumberOfRows();
+		numOfCells = 0;
 	}
 	
 	private interface AddData {
@@ -243,17 +243,6 @@ public class ExcelRead<T> {
 		return -1;
 	}
 	
-	private Object getField(Field f, T t) {
-		f.setAccessible(true);
-		try {
-			return f.get(t);
-		} catch (IllegalArgumentException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
-	}
-	
 	private List getList(Field f, T t) {
 		
 		List result = (List) getField(f, t);
@@ -285,6 +274,17 @@ public class ExcelRead<T> {
 		}
 		
 		return result;
+	}
+	
+	private Object getField(Field f, T t) {
+		f.setAccessible(true);
+		try {
+			return f.get(t);
+		} catch (IllegalArgumentException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		} catch (IllegalAccessException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
 	}
 	
 	public void set(Field f, Object obj) {
