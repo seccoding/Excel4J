@@ -4,26 +4,25 @@ xls 와 xlsx를 모두 지원함.
 
 
 ## 사용 방법
-* maven 사용
-   1. Repository 추가
-   <pre>
-   &lt;repositories>
-		&lt;repository>
-			&lt;id>bintray&lt;/id>
-			&lt;url>http://jcenter.bintray.com&lt;/url>
-			&lt;snapshots>
-				&lt;enabled>false&lt;/enabled>
-			&lt;/snapshots>
-		&lt;/repository>
-	&lt;/repositories>
+### maven 사용
+1. Repository 추가<pre>
+   &lt;repositories&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;repository&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;id&gt;bintray&lt;/id&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;url&gt;http://jcenter.bintray.com</url&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;snapshots&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;enabled&gt;false&lt;/enabled&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/snapshots&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/repository&gt;
+&lt;/repositories&gt;
    </pre>
-   1. dependency 추가
-   <pre>
-   &lt;dependency>
-		&lt;groupId>io.github.seccoding&lt;/groupId>
-		&lt;artifactId>Excel&lt;/artifactId>
-		&lt;version>1.1.1&lt;/version>
-	&lt;/dependency>
+   
+1. dependency 추가<pre>
+   &lt;dependency&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;io.github.seccoding&lt;/groupId&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;Excel&lt;/artifactId&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;1.1.1&lt;/version&gt;
+	&lt;/dependency&gt;
    </pre>
    
 ### maven dependency에 Excel-1.1.1.jar 파일을 추가할 경우
