@@ -4,6 +4,28 @@ xls 와 xlsx를 모두 지원함.
 
 
 ## 사용 방법
+* maven 사용
+   1. Repository 추가
+   <pre>
+   &lt;repositories>
+		&lt;repository>
+			&lt;id>bintray&lt;/id>
+			&lt;url>http://jcenter.bintray.com&lt;/url>
+			&lt;snapshots>
+				&lt;enabled>false&lt;/enabled>
+			&lt;/snapshots>
+		&lt;/repository>
+	&lt;/repositories>
+   </pre>
+   1. dependency 추가
+   <pre>
+   &lt;dependency>
+		&lt;groupId>io.github.seccoding&lt;/groupId>
+		&lt;artifactId>Excel&lt;/artifactId>
+		&lt;version>1.1.1&lt;/version>
+	&lt;/dependency>
+   </pre>
+   
 ### maven dependency에 Excel-1.1.1.jar 파일을 추가할 경우
 1. Excel-1.1.1.jar파일을 C:\에 복사합니다.
 1. Maven 명령어를 이용해 .m2 Repository 에 Excel-1.1.1.jar 를 설치(저장)합니다.<pre>mvn install:install-file -Dfile=C:\Excel-1.1.1.jar -DgroupId=io.github.seccoding -DartifactId=Excel -Dversion=1.1.1 -Dpackaging=jar</pre>
