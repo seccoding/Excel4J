@@ -1,9 +1,49 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.github.seccoding</groupId>
 	<artifactId>Excel</artifactId>
 	<version>1.1.1</version>
+	<packaging>jar</packaging>
+
+	<name>Excel Utility</name>
+	<description>Excel Utility</description>
+	<url>https://github.com/seccoding/Excel</url>
+
+	<developers>
+		<developer>
+			<name>mcjang1116</name>
+			<email>mcjang1116@gmail.com</email>
+		</developer>
+	</developers>
+
+	<scm>
+		<url>https://github.com/seccoding/Excel.git</url>
+	</scm>
+
+	<distributionManagement>
+		<repository>
+			<id>Excel</id>
+			<url>https://api.bintray.com/maven/mcjang1116/io.github.seccoding/Excel/;publish=1</url>
+		</repository>
+	</distributionManagement>
+
+	<properties>
+		<java.version>1.8</java.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<bintray.repo>mcjang1116/io.github.seccoding</bintray.repo>
+		<bintray.package>Excel</bintray.package>
+	</properties>
+
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>https://opensource.org/licenses/Apache-2.0</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -12,6 +52,23 @@
 				<configuration>
 					<source>1.6</source>
 					<target>1.6</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>1.6</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<attach>false</attach>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -38,7 +95,5 @@
 			<version>3.14</version>
 		</dependency>
 	</dependencies>
-	<url>https://github.com/seccoding/Excel</url>
-	<name>Excel Utility</name>
-	<description>Excel Utility</description>
+
 </project>
