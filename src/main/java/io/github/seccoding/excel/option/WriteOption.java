@@ -1,5 +1,6 @@
 package io.github.seccoding.excel.option;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -28,7 +29,9 @@ import java.util.List;
  * @author Minchang Jang (mcjang1116@gmail.com)
  *
  */
-public class WriteOption {
+public class WriteOption<T> {
+	
+	private String className;
 	
 	/**
 	 * 엑셀 파일이 만들어질 위치를 지정한다.
@@ -49,7 +52,11 @@ public class WriteOption {
 	/**
 	 * 엑셀 문서의 내용을 정의한다.
 	 */
-	private List<String[]> contents;
+	private List<T> contents;
+	
+	public String getClassName() {
+		return className;
+	}
 	
 	/**
 	 * 엑셀 파일의 경로를 가져온다.
@@ -77,7 +84,7 @@ public class WriteOption {
 	 * @param String 확장자를 포함한 엑셀 파일의 이름
 	 */
 	public void setFileName(String fileName) {
-		this.fileName = fileName;
+		this.fileName = File.separator + fileName;
 	}
 	/**
 	 * 엑셀 문서 내의 Sheet 이름을 가져온다.
@@ -123,37 +130,45 @@ public class WriteOption {
 		List<String> temp = Arrays.asList(titles);
 		this.titles = temp;
 	}
+	
 	/**
 	 * 엑셀 문서에 포함될 내용을 가져온다.
 	 * @return List<Stirng[]> 엑셀 문서에 포함될 내용
 	 */
-	public List<String[]> getContents() {
+	public List<T> getContents() {
 		
-		List<String[]> temp = new ArrayList<String[]>();
+		List<T> temp = new ArrayList<T>();
 		temp.addAll(this.contents);
 		
 		return temp;
 	}
+	
 	/**
 	 * 엑셀 문서의 내용을 정의한다.
 	 * @param List<String[]> 리스트 형태의 내용 정보. 하나의 Row는 하나의 배열로 정의한다.
 	 */
-	public void setContents(List<String[]> contents) {
-		List<String[]> temp = new ArrayList<String[]>();
+	public void setContents(List<T> contents) {
+		
+		this.className = contents.get(0).getClass().getName();
+		
+		List<T> temp = new ArrayList<T>();
 		temp.addAll(contents);
 		
 		this.contents = temp;
 	}
+	
 	/**
 	 * 엑셀 문서의 내용을 정의한다.
 	 * @param String[] 가변 길이 형태. 한번 호출 할 때마다 한 Row씩 증가한다.
 	 */
-	public void setContents(String ... contents) {
-		List<String[]> temp = new ArrayList<String[]>();
-		temp.add(contents);
+	public void setContents(T ... contents) {
+		List<T> temp = new ArrayList<T>();
+		for (T t : contents) {
+			temp.add(t);
+		}
 		
 		if ( this.contents == null ) {
-			this.contents = new ArrayList<String[]>();
+			this.contents = new ArrayList<T>();
 		}
 		
 		this.contents.addAll(temp);

@@ -24,6 +24,7 @@ public class CellRef {
 			value = "";
 		}
 		else {
+			
 			if( cell.getCellType() == Cell.CELL_TYPE_FORMULA ) {
 				value = cell.getCellFormula();
 			}

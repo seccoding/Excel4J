@@ -2,6 +2,11 @@
 Java 에서 엑셀파일을 읽고 쓰는 유틸리티<br/>
 xls 와 xlsx를 모두 지원함.
 
+## Release Note
+### 2.0.0 (2019.02.20)
+> 1. WriteOption.setContents(List<String[]> contents); 삭제.
+> 2. WriteOption<T>.setContents(List<T> contents); 추가
+> 2-1. String[] 대신 Data Class 로 사용함.
 
 ## 사용 방법
 ### maven 사용
@@ -21,18 +26,18 @@ xls 와 xlsx를 모두 지원함.
    &lt;dependency&gt;
 &nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;io.github.seccoding&lt;/groupId&gt;
 &nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;Excel&lt;/artifactId&gt;
-&nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;1.1.1&lt;/version&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;2.0.0&lt;/version&gt;
 	&lt;/dependency&gt;
    </pre>
    
-### maven dependency에 Excel-1.1.1.jar 파일을 추가할 경우
-1. Excel-1.1.1.jar파일을 C:\에 복사합니다.
-1. Maven 명령어를 이용해 .m2 Repository 에 Excel-1.1.1.jar 를 설치(저장)합니다.<pre>mvn install:install-file -Dfile=C:\Excel-1.1.1.jar -DgroupId=io.github.seccoding -DartifactId=Excel -Dversion=1.1.1 -Dpackaging=jar</pre>
+### maven dependency에 Excel-2.0.0.jar 파일을 추가할 경우
+1. Excel-2.0.0.jar파일을 C:\에 복사합니다.
+1. Maven 명령어를 이용해 .m2 Repository 에 Excel-2.0.0.jar 를 설치(저장)합니다.<pre>mvn install:install-file -Dfile=C:\Excel-2.0.0.jar -DgroupId=io.github.seccoding -DartifactId=Excel -Dversion=2.0.0 -Dpackaging=jar</pre>
 1. 본인의 Project/pom.xml 에 dependency를 추가합니다.<pre>
 	&lt;dependency&gt;
 	&nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;io.github.seccoding&lt;/groupId&gt;
 	&nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;Excel&lt;/artifactId&gt;
-	&nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;1.1.1&lt;/version&gt;
+	&nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;2.0.0&lt;/version&gt;
 	&lt;/dependency&gt;
 </pre>
 
@@ -135,35 +140,100 @@ public class ExcelReadTest {
 ---
 ## Excel File 쓰기
 <pre>
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.github.seccoding.excel.annotations.Field;
 import io.github.seccoding.excel.option.WriteOption;
 import io.github.seccoding.excel.write.ExcelWrite;
 
+/**
+ * ExcelWriteTest Example
+ * 
+ * @author Min Chang Jang (mcjang1116@gmail.com)
+ */
 public class ExcelWriteTest {
 
 	public static void main(String[] args) {
-		WriteOption wo = new WriteOption();
+
+		WriteOption&lt;TestVO> wo = new WriteOption&lt;TestVO>();
 		wo.setSheetName("Test");
 		wo.setFileName("test.xlsx");
-		wo.setFilePath("d:\\");
-		
-		List&lt;String&gt; titles = new ArrayList&lt;String&gt;();
+		wo.setFilePath("C:\\Users\\mcjan\\Desktop");
+
+		List&lt;String> titles = new ArrayList&lt;String>();
 		titles.add("Title1");
 		titles.add("Title2");
 		titles.add("Title3");
+		titles.add("Title4");
 		wo.setTitles(titles);
-		
-		List&lt;String[]&gt; contents = new ArrayList&lt;String[]&gt;();
-		contents.add(new String[]{"1", "2", "3"});
-		contents.add(new String[]{"11", "22", "33"});
-		contents.add(new String[]{"111", "222", "333"});
+
+		List&lt;TestVO> contents = new ArrayList&lt;TestVO>();
+		contents.add(new TestVO(1, "ABC", true, "=1+1"));
+		contents.add(new TestVO(2, "DEF", true, "=2+2"));
+		contents.add(new TestVO(3, "HIJ", true, "=3+3"));
 		wo.setContents(contents);
-		
+
 		File excelFile = ExcelWrite.write(wo);
 	}
-	
+
+	public static class TestVO {
+		
+		@Field("Title1")
+		private int id;
+		
+		@Field("Title2")
+		private String content;
+		
+		@Field("Title3")
+		private boolean isTrue;
+		
+		@Field("Title4")
+		private String formula;
+
+		public TestVO(int id, String content, boolean isTrue, String formula) {
+			this.id = id;
+			this.content = content;
+			this.isTrue = isTrue;
+			this.formula = formula;
+		}
+
+		public int getId() {
+			return id;
+		}
+
+		public void setId(int id) {
+			this.id = id;
+		}
+
+		public String getContent() {
+			return content;
+		}
+
+		public void setContent(String content) {
+			this.content = content;
+		}
+
+		public boolean isTrue() {
+			return isTrue;
+		}
+
+		public void setTrue(boolean isTrue) {
+			this.isTrue = isTrue;
+		}
+
+		public String getFormula() {
+			return formula;
+		}
+
+		public void setFormula(String formula) {
+			this.formula = formula;
+		}
+
+	}
+
 }
+
 </pre>

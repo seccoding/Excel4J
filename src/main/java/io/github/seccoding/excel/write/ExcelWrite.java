@@ -3,6 +3,8 @@ package io.github.seccoding.excel.write;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -10,35 +12,29 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
+import io.github.seccoding.excel.annotations.Field;
 import io.github.seccoding.excel.option.WriteOption;
 import io.github.seccoding.excel.write.util.FileType;
 
 /**
  * 엑셀 파일을 서버의 디스크에 작성한다.
- * <pre>
- * 사용 예제
-	WriteOption wo = new WriteOption();
-	wo.setSheetName("Test");
-	wo.setFileName("test.xlsx");
-	wo.setFilePath("d:\\");
-	List&lt;String> titles = new ArrayList&lt;String>();
-	titles.add("Title1");
-	titles.add("Title2");
-	titles.add("Title3");
-	wo.setTitles(titles);
-	
-	List&lt;String[]> contents = new ArrayList&lt;String[]>();
-	contents.add(new String[]{"1", "2", "3"});
-	contents.add(new String[]{"11", "22", "33"});
-	contents.add(new String[]{"111", "222", "333"});
-	wo.setContents(contents);
-	
-	File excelFile = ExcelWrite.write(wo);
-</pre>
+ * @see io.github.seccoding.excel.ExcelWriteTest
  * @author Minchang Jang (mcjang1116@gmail.com)
  */
 public class ExcelWrite {
 
+	private static List<Class> numericTypes;
+	
+	static {
+		numericTypes = new ArrayList<Class>();
+		numericTypes.add(Byte.class);
+		numericTypes.add(Short.class);
+		numericTypes.add(Integer.class);
+		numericTypes.add(Long.class);
+		numericTypes.add(Float.class);
+		numericTypes.add(Double.class);
+	}
+	
 	/**
 	 * 엑셀 파일이 쓰여질 경로.
 	 * WriteOption 에서 가져온다.
@@ -67,7 +63,7 @@ public class ExcelWrite {
 		sheet = wb.createSheet(writeOption.getSheetName());
 		
 		setTitle(writeOption.getTitles());
-		setContents(writeOption.getContents());
+		setContents(writeOption);
 		
 		FileOutputStream fos = null;
 		try {
@@ -113,26 +109,78 @@ public class ExcelWrite {
 		
 	}
 	
-	private static void setContents(List<String[]> values) {
+	
+	private static void setContents(WriteOption writeOption) {
 		
 		Row row = null;
-		Cell cell = null;
+		
+		List<Object> values = writeOption.getContents();
 		
 		int cellIndex = 0;
-		
 		if( values != null && values.size() > 0 ) {
 			
-			for(String[] arr : values) {
+			for(Object arr : values) {
 				row = sheet.createRow(rowIndex++);
 				cellIndex = 0;
-				for(String value : arr) {
-					cell = row.createCell(cellIndex++);
-					cell.setCellValue(value);
+				
+				java.lang.reflect.Field[] fields = arr.getClass().getDeclaredFields();
+				for ( java.lang.reflect.Field f : fields ) {
+					f.setAccessible(true);
+					
+					if ( f.isAnnotationPresent(Field.class) ) {
+						Field anno = f.getAnnotation(Field.class);
+						
+						String title = anno.value();
+						cellIndex = getColumnIndex(title, writeOption);
+						
+						fillValue(row, cellIndex, arr, f);
+							
+					}
+					
 				}
+				
 			}
 		}
 		
 	}
+	
+	private static int getColumnIndex(String title, WriteOption writeOption) {
+		return writeOption.getTitles().indexOf(title);
+	}
+
+	private static void fillValue(Row row, int cellIndex, Object arr, java.lang.reflect.Field f) {
+		Cell cell = null;
+		try {
+			Object obj = f.get(arr);
+			
+			if ( obj.getClass() == String.class ) {
+				
+				String data = obj + "";
+				if ( data.trim().startsWith("=") ) {
+					data = data.trim().substring(1).trim();
+					cell = row.createCell(cellIndex, Cell.CELL_TYPE_FORMULA);
+					cell.setCellFormula(data);
+				}
+				else {
+					cell = row.createCell(cellIndex);
+					cell.setCellValue(data);
+				}
+			}
+			else if ( numericTypes.contains(obj.getClass()) ) {
+				cell = row.createCell(cellIndex, Cell.CELL_TYPE_NUMERIC);
+				cell.setCellValue(Double.parseDouble(obj + ""));
+			}
+			else if ( obj.getClass() == Boolean.class ) {
+				cell = row.createCell(cellIndex, Cell.CELL_TYPE_BOOLEAN);
+				cell.setCellValue(Boolean.parseBoolean(obj + ""));
+			}
+		} catch (IllegalArgumentException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		} catch (IllegalAccessException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
+	}
+	
 	
 	private static File getFile(String fileName) {
 		return new File(downloadPath + fileName);
