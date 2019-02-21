@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import io.github.seccoding.excel.annotations.ExcelSheet;
+
 /**
  * Excel(xls, xlsx) 파일을 쓸 때, 필요한 옵션을 정의한다.
  * 여기에 정의된 옵션으로 실제 파일을 작성한다.
@@ -31,8 +33,6 @@ import java.util.List;
  */
 public class WriteOption<T> {
 	
-	private String className;
-	
 	/**
 	 * 엑셀 파일이 만들어질 위치를 지정한다.
 	 */
@@ -53,10 +53,6 @@ public class WriteOption<T> {
 	 * 엑셀 문서의 내용을 정의한다.
 	 */
 	private List<T> contents;
-	
-	public String getClassName() {
-		return className;
-	}
 	
 	/**
 	 * 엑셀 파일의 경로를 가져온다.
@@ -100,6 +96,12 @@ public class WriteOption<T> {
 	public void setSheetName(String sheetName) {
 		this.sheetName = sheetName;
 	}
+	
+	private void setSheetName() {
+		ExcelSheet sheet = contents.get(0).getClass().getAnnotation(ExcelSheet.class);
+		this.setSheetName(sheet.value());
+	}
+	
 	/**
 	 * 엑셀 문서의 타이틀 정보를 가져온다.
 	 * @return List<String> 타이틀 정보를 가진 List
@@ -148,13 +150,12 @@ public class WriteOption<T> {
 	 * @param List<String[]> 리스트 형태의 내용 정보. 하나의 Row는 하나의 배열로 정의한다.
 	 */
 	public void setContents(List<T> contents) {
-		
-		this.className = contents.get(0).getClass().getName();
-		
 		List<T> temp = new ArrayList<T>();
 		temp.addAll(contents);
 		
 		this.contents = temp;
+		
+		setSheetName();
 	}
 	
 	/**
@@ -167,11 +168,9 @@ public class WriteOption<T> {
 			temp.add(t);
 		}
 		
-		if ( this.contents == null ) {
-			this.contents = new ArrayList<T>();
-		}
+		this.contents = temp;
 		
-		this.contents.addAll(temp);
+		setSheetName();
 	}
 	
 }

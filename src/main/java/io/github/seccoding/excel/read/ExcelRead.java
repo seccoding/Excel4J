@@ -11,6 +11,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellReference;
 
+import io.github.seccoding.excel.annotations.ExcelSheet;
 import io.github.seccoding.excel.annotations.Field;
 import io.github.seccoding.excel.annotations.Require;
 import io.github.seccoding.excel.option.ReadOption;
@@ -95,7 +96,7 @@ public class ExcelRead<T> {
 	public T readToObject(ReadOption readOption, Class<?> clazz) {
 		this.clazz = clazz;
 		
-		setup(readOption.getFilePath(), readOption.getSheetName());
+		setup(readOption);
 		createResultInstance();
 		
 		makeData(readOption, new AddData() {
@@ -117,7 +118,7 @@ public class ExcelRead<T> {
 	public List<T> readToList(ReadOption readOption, Class<?> clazz) {
 		this.clazz = clazz;
 		
-		setup(readOption.getFilePath(), readOption.getSheetName());
+		setup(readOption);
 		createResultInstance();
 		
 		makeData(readOption, new AddData() {
@@ -193,6 +194,7 @@ public class ExcelRead<T> {
 		return isKeepGoing;
 	}
 	
+	@Deprecated
 	public String getValue(ReadOption readOption, String cellName) {
 		setup(readOption.getFilePath(), readOption.getSheetName());
 		
@@ -203,13 +205,46 @@ public class ExcelRead<T> {
 		return CellReferenceUtil.getValue(cell);
 	}
 	
+	public String getValue(String filePath, String cellName) {
+		setup(filePath, null);
+		
+		CellReference cr = new CellReference(cellName);
+		row = sheet.getRow(cr.getRow());
+		cell = row.getCell(cr.getCol());
+		
+		return CellReferenceUtil.getValue(cell);
+	}
+	
+	public String getValue(String filePath, String sheetName, String cellName) {
+		setup(filePath, sheetName);
+		
+		CellReference cr = new CellReference(cellName);
+		row = sheet.getRow(cr.getRow());
+		cell = row.getCell(cr.getCol());
+		
+		return CellReferenceUtil.getValue(cell);
+	}
+	
 	private void setup(String filePath, String sheetName) {
 		getWorkbook(filePath);
+		
 		if ( sheetName == null || sheetName.length() == 0 ) {
 			getSheet(0);
 		}
 		else {
 			getSheet(sheetName);
+		}
+		
+		setNumOfRowsAndCells();
+	}
+	
+	private void setup(ReadOption readOption) {
+		getWorkbook(readOption.getFilePath());
+		if ( readOption.getSheetName() == null ) {
+			extractSheetName();
+		}
+		if ( readOption.getOutputColumns() == null ) {
+			extractOutputColumns(readOption);
 		}
 		setNumOfRowsAndCells();
 	}
@@ -218,12 +253,45 @@ public class ExcelRead<T> {
 		wb = GetWorkBook.getWorkbook(filePath);
 	}
 	
+	private void extractSheetName() {
+		ExcelSheet sheet = clazz.getAnnotation(ExcelSheet.class);
+		
+		String sheetName = null;
+		if ( sheet != null ) {
+			sheetName = sheet.value();
+		}
+		
+		if ( sheetName == null || sheetName.length() == 0 ) {
+			getSheet(0);
+		}
+		else {
+			getSheet(sheetName);
+		}
+	}
+	
 	private void getSheet(int index) {
 		sheet = wb.getSheetAt(index);
 	}
 	
 	private void getSheet(String sheetName) {
 		sheet = wb.getSheet(sheetName);
+	}
+	
+	private void extractOutputColumns(ReadOption readOption) {
+		
+		List<String> outputColumns = new ArrayList<String>();
+		
+		java.lang.reflect.Field[] fields = clazz.getDeclaredFields();
+		
+		for (java.lang.reflect.Field f : fields) {
+			String column = f.getAnnotation(Field.class).value();
+			if ( column != null && column.length() > 0 ) {
+				outputColumns.add(column);
+			}
+		}
+		
+		readOption.setOutputColumns(outputColumns);
+		
 	}
 	
 	@SuppressWarnings("unchecked")

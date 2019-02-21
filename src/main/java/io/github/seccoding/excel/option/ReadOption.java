@@ -69,6 +69,10 @@ public class ReadOption {
 	 */
 	public List<String> getOutputColumns() {
 		
+		if ( this.outputColumns == null ) {
+			return null;
+		}
+		
 		List<String> temp = new ArrayList<String>();
 		temp.addAll(outputColumns);
 		
@@ -81,8 +85,17 @@ public class ReadOption {
 	 */
 	public void setOutputColumns(List<String> outputColumns) {
 		
+		if ( outputColumns == null ) {
+			this.outputColumns = null;
+			return;
+		}
+		
 		List<String> temp = new ArrayList<String>();
 		temp.addAll(outputColumns);
+		
+		if ( this.outputColumns == null ) {
+			this.outputColumns = new ArrayList<String>();
+		}
 		
 		this.outputColumns.clear();
 		this.outputColumns = temp;
@@ -92,13 +105,19 @@ public class ReadOption {
 	 * Excel에서 읽어올 Column을 지정한다.
 	 * @param String[] 가변길이로 지정함.
 	 */
-	public void setOutputColumns(String ... outputColumns) {
+	public void setOutputColumns(String outputColumn, String ... outputColumns) {
+		
+		if ( outputColumns == null ) {
+			this.outputColumns = null;
+			return;
+		}
 		
 		if(this.outputColumns == null) {
 			this.outputColumns = new ArrayList<String>();
 		}
 		
 		this.outputColumns.clear();
+		this.outputColumns.add(outputColumn);
 		
 		for(String ouputColumn : outputColumns) {
 			this.outputColumns.add(ouputColumn);

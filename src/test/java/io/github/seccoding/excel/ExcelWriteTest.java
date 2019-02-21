@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.github.seccoding.excel.annotations.ExcelSheet;
 import io.github.seccoding.excel.annotations.Field;
 import io.github.seccoding.excel.option.WriteOption;
 import io.github.seccoding.excel.write.ExcelWrite;
@@ -18,7 +19,7 @@ public class ExcelWriteTest {
 	public static void main(String[] args) {
 
 		WriteOption<TestVO> wo = new WriteOption<TestVO>();
-		wo.setSheetName("Test");
+//		wo.setSheetName("Test"); @ExcelSheet()로 교체
 		wo.setFileName("test.xlsx");
 		wo.setFilePath("C:\\Users\\mcjan\\Desktop");
 
@@ -38,6 +39,7 @@ public class ExcelWriteTest {
 		File excelFile = ExcelWrite.write(wo);
 	}
 
+	@ExcelSheet("TestSheet")
 	public static class TestVO {
 		
 		@Field("Title1")
