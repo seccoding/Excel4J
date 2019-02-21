@@ -10,6 +10,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class GetWorkBook {
 
+	@SuppressWarnings("resource")
 	public static Workbook getWorkbook(String filePath) {
 
 		FileInputStream fis = null;
@@ -19,24 +20,23 @@ public class GetWorkBook {
 			throw new RuntimeException(e.getMessage(), e);
 		}
 
-		Workbook wb = null;
-
-		if (filePath.toUpperCase().endsWith(".XLS")) {
+		if (FileType.isXls(filePath)) {
 			try {
-				wb = new HSSFWorkbook(fis);
+				return new HSSFWorkbook(fis);
 			} catch (IOException e) {
 				throw new RuntimeException(e.getMessage(), e);
 			}
-		} else if (filePath.toUpperCase().endsWith(".XLSX")) {
+		}  
+		if (FileType.isXlsx(filePath)) {
 			try {
-				wb = new XSSFWorkbook(fis);
+				return new XSSFWorkbook(fis);
 			} catch (IOException e) {
 				throw new RuntimeException(e.getMessage(), e);
 			}
 		}
-
-		return wb;
-
+		
+		throw new RuntimeException(filePath + " isn't excel file format");
+		
 	}
 
 }
