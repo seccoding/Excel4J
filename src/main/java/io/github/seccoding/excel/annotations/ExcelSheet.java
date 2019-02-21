@@ -10,6 +10,5 @@ import java.lang.annotation.Target;
 public @interface ExcelSheet {
 
 	public String value();
-	public double row() default 16.5;
 	
 }
