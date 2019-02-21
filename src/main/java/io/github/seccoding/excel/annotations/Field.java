@@ -11,6 +11,4 @@ public @interface Field {
 
 	public String value();
 	
-	
-	
 }

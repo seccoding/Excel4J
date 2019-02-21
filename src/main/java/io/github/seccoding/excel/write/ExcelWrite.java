@@ -59,7 +59,6 @@ public class ExcelWrite {
 
 		Workbook wb = MakeWorkBook.getWorkbook(writeOption.getFileName());
 		sheet = wb.createSheet(writeOption.getSheetName());
-
 		setTitle(writeOption.getTitles());
 		setContents(writeOption);
 
@@ -136,16 +135,17 @@ public class ExcelWrite {
 					cell = row.createCell(cellIndex, Cell.CELL_TYPE_FORMULA);
 					cell.setCellFormula(data);
 				} else {
-					cell = row.createCell(cellIndex);
+					cell = row.createCell(cellIndex, Cell.CELL_TYPE_STRING);
 					cell.setCellValue(data);
 				}
 			} else if (numericTypes.contains(obj.getClass())) {
 				cell = row.createCell(cellIndex, Cell.CELL_TYPE_NUMERIC);
-				cell.setCellValue(Double.parseDouble(obj + ""));
+				cell.setCellValue(Double.parseDouble(String.valueOf(obj)));
 			} else if (obj.getClass() == Boolean.class) {
 				cell = row.createCell(cellIndex, Cell.CELL_TYPE_BOOLEAN);
 				cell.setCellValue(Boolean.parseBoolean(obj + ""));
 			}
+			sheet.autoSizeColumn(cellIndex);
 		} catch (IllegalArgumentException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		} catch (IllegalAccessException e) {
