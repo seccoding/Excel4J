@@ -3,6 +3,11 @@ Java 에서 엑셀파일을 읽고 쓰는 유틸리티<br/>
 xls 와 xlsx를 모두 지원함.
 
 ## Release Note
+### 2.1.0 (2019.02.21)
+> 1. ExcelRead.read(ReadOption readOption):Map<String, String> is deprecated.
+> 2. ExcelRead.readToObject(ReadOption readOption, Class<?> clazz):T is deprecated
+> 3. Make new ExcelRead.readToList(ReadOption readOption, Class<?> clazz):List<T>
+
 ### 2.0.0 (2019.02.20)
 > 1. WriteOption.setContents(List<String[]> contents); 삭제.
 > 2. WriteOption<T>.setContents(List<T> contents); 추가
@@ -26,18 +31,18 @@ xls 와 xlsx를 모두 지원함.
    &lt;dependency&gt;
 &nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;io.github.seccoding&lt;/groupId&gt;
 &nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;Excel&lt;/artifactId&gt;
-&nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;2.0.0&lt;/version&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;2.1.0&lt;/version&gt;
 	&lt;/dependency&gt;
    </pre>
    
-### maven dependency에 Excel-2.0.0.jar 파일을 추가할 경우
-1. Excel-2.0.0.jar파일을 C:\에 복사합니다.
-1. Maven 명령어를 이용해 .m2 Repository 에 Excel-2.0.0.jar 를 설치(저장)합니다.<pre>mvn install:install-file -Dfile=C:\Excel-2.0.0.jar -DgroupId=io.github.seccoding -DartifactId=Excel -Dversion=2.0.0 -Dpackaging=jar</pre>
+### maven dependency에 Excel-2.1.0.jar 파일을 추가할 경우
+1. Excel-2.1.0.jar파일을 C:\에 복사합니다.
+1. Maven 명령어를 이용해 .m2 Repository 에 Excel-2.1.0.jar 를 설치(저장)합니다.<pre>mvn install:install-file -Dfile=C:\Excel-2.1.0.jar -DgroupId=io.github.seccoding -DartifactId=Excel -Dversion=2.1.0 -Dpackaging=jar</pre>
 1. 본인의 Project/pom.xml 에 dependency를 추가합니다.<pre>
 	&lt;dependency&gt;
 	&nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;io.github.seccoding&lt;/groupId&gt;
 	&nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;Excel&lt;/artifactId&gt;
-	&nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;2.0.0&lt;/version&gt;
+	&nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;2.1.0&lt;/version&gt;
 	&lt;/dependency&gt;
 </pre>
 
@@ -49,7 +54,6 @@ xls 와 xlsx를 모두 지원함.
 ---
 ## Excel File 읽기
 <pre>
-package io.github.seccoding.excel;
 
 import java.util.List;
 import java.util.Map;
@@ -65,46 +69,77 @@ public class ExcelReadTest {
 
 	public static void main(String[] args) {
 
-		ro.setFilePath("excel_file_path_with_file_name");
-		ro.setOutputColumns("B");
-		ro.setStartRow(7);
+		ro.setFilePath("Excel File Path");
+		ro.setOutputColumns("A", "B", "C", "D", "E", "F");
+		ro.setStartRow(1);
 		ro.setSheetName("Sheet1");
-		
+
 		test1();
 		test2();
 		test3();
+		test4();
 	}
 
+	@Deprecated
 	public static void test1() {
-		Map&lt;String, String> result = new ExcelRead&lt;>().read(ro);
+		System.out.println("test1");
+		Map&lt;String, String> result = new ExcelRead().read(ro);
 
 		System.out.println(result);
+		System.out.println(result.get("A3"));
+		System.out.println(result.get("B3"));
+		System.out.println(result.get("C3"));
 	}
 
+	@Deprecated
 	public static void test2() {
+		System.out.println("test2");
+		
+		ro.setOutputColumns("A", "B", "C");
 		TestClass result = new ExcelRead&lt;TestClass>().readToObject(ro, TestClass.class);
 
-		System.out.println(result.getNo());
-		System.out.println(result.getColumnName());
-		System.out.println(result.getType());
+		System.out.println(result.getNo().size());
+		System.out.println(result.getColumnName().size());
+		System.out.println(result.getType().size());
+
+		System.out.print(result.getNo().get(result.getNo().size() - 1));
+		System.out.print(" / " + result.getColumnName().get(result.getColumnName().size() - 1));
+		System.out.println(" / " + result.getType().get(result.getType().size() - 1));
 	}
 	
 	public static void test3() {
 		System.out.println("test3");
+		
+		ro.setOutputColumns("A", "B", "C");
+		List&lt;TestClass2> result = new ExcelRead&lt;TestClass2>().readToList(ro, TestClass2.class);
+		System.out.println(result.size());
+		
+		for (TestClass2 testClass2 : result) {
+			System.out.print(testClass2.getNo());
+			System.out.print(" / " + testClass2.getColumnName());
+			System.out.println(" / " + testClass2.getType());
+		}
+		
+	}
+
+	public static void test4() {
+		System.out.println("test4");
+		ro.setOutputColumns("B");
 		String result = new ExcelRead().getValue(ro, "B3");
 		System.out.println(result);
 	}
 
+	@Deprecated
 	public static class TestClass {
 
-		@Field("B")
+		@Field("A")
 		@Require // 값이 항상 존재하는 컬럼을 지정. 탐색 ROW를 지정할 때 사용.
 		private List&lt;String> no;
-		
-		@Field("C")
+
+		@Field("B")
 		private List&lt;String> columnName;
-		
-		@Field("F")
+
+		@Field("C")
 		private List&lt;String> type;
 
 		public List&lt;String> getNo() {
@@ -133,8 +168,45 @@ public class ExcelReadTest {
 
 	}
 
-}
+	public static class TestClass2 {
 
+		@Field("A")
+		@Require // 값이 항상 존재하는 컬럼을 지정. 탐색 ROW를 지정할 때 사용.
+		private String no;
+
+		@Field("B")
+		private String columnName;
+
+		@Field("C")
+		private String type;
+
+		public String getNo() {
+			return no;
+		}
+
+		public void setNo(String no) {
+			this.no = no;
+		}
+
+		public String getColumnName() {
+			return columnName;
+		}
+
+		public void setColumnName(String columnName) {
+			this.columnName = columnName;
+		}
+
+		public String getType() {
+			return type;
+		}
+
+		public void setType(String type) {
+			this.type = type;
+		}
+
+	}
+
+}
 </pre>
 
 ---

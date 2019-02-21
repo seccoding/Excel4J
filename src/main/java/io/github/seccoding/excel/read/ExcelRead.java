@@ -1,12 +1,9 @@
 package io.github.seccoding.excel.read;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -14,10 +11,12 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellReference;
 
+import io.github.seccoding.excel.annotations.Field;
 import io.github.seccoding.excel.annotations.Require;
 import io.github.seccoding.excel.option.ReadOption;
-import io.github.seccoding.excel.read.util.CellRef;
-import io.github.seccoding.excel.read.util.FileType;
+import io.github.seccoding.excel.util.Add;
+import io.github.seccoding.excel.util.CellReferenceUtil;
+import io.github.seccoding.excel.util.GetWorkBook;
 
 /**
  * 엑셀 파일을 읽어 온다.
@@ -49,10 +48,6 @@ import io.github.seccoding.excel.read.util.FileType;
  */
 public class ExcelRead<T> {
 	
-	private static final int LIST = 1;
-	private static final int MAP = 2;
-	private static final int SET = 3;
-	
 	private T t;
 	
 	private Workbook wb;
@@ -66,12 +61,15 @@ public class ExcelRead<T> {
 	
 	private String cellName;
 	
+	private final List<T> result = new ArrayList<T>();
+	private Class<?> clazz;
 	
 	/**
 	 * 엑셀 파일을 읽어옴
 	 * @param readOption
 	 * @return
 	 */
+	@Deprecated
 	public Map<String, String> read(ReadOption readOption) {
 		
 		setup(readOption.getFilePath(), readOption.getSheetName());
@@ -79,10 +77,11 @@ public class ExcelRead<T> {
 		
 		makeData(readOption, new AddData() {
 			@Override
-			public void pushData(int rowIndex) {
-				map.put(cellName + (rowIndex + 1), CellRef.getValue(cell));
-				
-			}});
+			public boolean pushData(int rowIndex) {
+				map.put(cellName + (rowIndex + 1), CellReferenceUtil.getValue(cell));
+				return true;
+			}
+		}, false);
 		return map;
 		
 	}
@@ -92,23 +91,106 @@ public class ExcelRead<T> {
 	 * @param readOption
 	 * @return
 	 */
-	public T readToObject(ReadOption readOption, Class<?> claz) {
+	@Deprecated
+	public T readToObject(ReadOption readOption, Class<?> clazz) {
+		this.clazz = clazz;
 		
 		setup(readOption.getFilePath(), readOption.getSheetName());
-		createResultInstance(claz);
+		createResultInstance();
 		
 		makeData(readOption, new AddData() {
 			@Override
-			public void pushData(int rowIndex) {
-				boolean isKeepGoing = addData(t, cellName, rowIndex + 1, CellRef.getValue(cell));
-				if ( !isKeepGoing ) {
-					return;
-				}
+			public boolean pushData(int rowIndex) {
+				return addData(rowIndex + 1, CellReferenceUtil.getValue(cell));
 			}
-		});
+		}, false);
 		
 		return t;
 		
+	}
+	
+	/**
+	 * 엑셀 파일을 읽어옴
+	 * @param readOption
+	 * @return
+	 */
+	public List<T> readToList(ReadOption readOption, Class<?> clazz) {
+		this.clazz = clazz;
+		
+		setup(readOption.getFilePath(), readOption.getSheetName());
+		createResultInstance();
+		
+		makeData(readOption, new AddData() {
+			@Override
+			public boolean pushData(int rowIndex) {
+				return addData(rowIndex + 1, CellReferenceUtil.getValue(cell));
+			}
+		}, true);
+		
+		return result;
+		
+	}
+	
+	private void makeData(ReadOption readOption, AddData addData, boolean makeList) {
+		for(int rowIndex = readOption.getStartRow() - 1; rowIndex <= numOfRows; rowIndex++) {
+			
+			row = sheet.getRow(rowIndex);
+			
+			if(row != null) {
+				numOfCells = row.getPhysicalNumberOfCells();
+				
+				for(int cellIndex = 0; cellIndex < numOfCells; cellIndex++) {
+					
+					cell = row.getCell(cellIndex);
+					cellName = CellReferenceUtil.getName(cell, cellIndex);
+					
+					if( !readOption.getOutputColumns().contains(cellName) ) {
+						break;
+					}
+					
+					if ( addData != null ) {
+						if ( !addData.pushData(rowIndex) ) {
+							return;
+						}
+					}
+					
+				}
+				
+				if ( makeList ) {
+					result.add(t);
+					createResultInstance();
+				}
+			}
+			
+		}
+	}
+	
+	private interface AddData {
+		public boolean pushData(int rowIndex);
+	}
+	
+	private boolean addData(int rowNum, String value) {
+		java.lang.reflect.Field[] fields = t.getClass().getDeclaredFields();
+		boolean isKeepGoing = true;
+		for (java.lang.reflect.Field field : fields) {
+			if ( isUsedRequireAnnotaion(field) ) {
+				Field annotation = field.getAnnotation(Field.class);
+				String column = annotation.value();
+				if ( column.equalsIgnoreCase(cellName) && (value == null || value.length() == 0) ) {
+					return false;
+				}
+			}
+			
+			if ( isKeepGoing && isUsedFieldAnnotaion(field) ) {
+				Field annotation = field.getAnnotation(Field.class);
+				String column = annotation.value();
+				if ( column.equalsIgnoreCase(cellName) ) {
+					Add.add(field.getName(), t, cellName + rowNum, value);
+				}
+			}
+		}
+		
+		return isKeepGoing;
 	}
 	
 	public String getValue(ReadOption readOption, String cellName) {
@@ -118,7 +200,7 @@ public class ExcelRead<T> {
 		row = sheet.getRow(cr.getRow());
 		cell = row.getCell(cr.getCol());
 		
-		return CellRef.getValue(cell);
+		return CellReferenceUtil.getValue(cell);
 	}
 	
 	private void setup(String filePath, String sheetName) {
@@ -133,7 +215,7 @@ public class ExcelRead<T> {
 	}
 	
 	private void getWorkbook(String filePath) {
-		wb = FileType.getWorkbook(filePath);
+		wb = GetWorkBook.getWorkbook(filePath);
 	}
 	
 	private void getSheet(int index) {
@@ -144,9 +226,10 @@ public class ExcelRead<T> {
 		sheet = wb.getSheet(sheetName);
 	}
 	
-	private T createResultInstance(Class<?> claz) {
+	@SuppressWarnings("unchecked")
+	private T createResultInstance() {
 		try {
-			this.t = (T) claz.newInstance();
+			this.t = (T) this.clazz.newInstance();
 			return t;
 		} catch (InstantiationException e) {
 			throw new RuntimeException(e.getMessage(), e);
@@ -160,141 +243,13 @@ public class ExcelRead<T> {
 		numOfCells = 0;
 	}
 	
-	private interface AddData {
-		public void pushData(int rowIndex);
+	private boolean isUsedFieldAnnotaion(java.lang.reflect.Field f) {
+		return f.getAnnotation(Field.class) != null;
 	}
 	
-	private void makeData(ReadOption readOption, AddData addData) {
-		for(int rowIndex = readOption.getStartRow() - 1; rowIndex < numOfRows; rowIndex++) {
-			
-			row = sheet.getRow(rowIndex);
-			
-			if(row != null) {
-				numOfCells = row.getPhysicalNumberOfCells();
-				
-				for(int cellIndex = 0; cellIndex < numOfCells; cellIndex++) {
-					
-					cell = row.getCell(cellIndex);
-					cellName = CellRef.getName(cell, cellIndex);
-					
-					if( !readOption.getOutputColumns().contains(cellName) ) {
-						continue;
-					}
-					
-					if ( addData != null ) {
-						addData.pushData(rowIndex);
-					}
-					
-				}
-				
-			}
-			
-		}
+	private boolean isUsedRequireAnnotaion(java.lang.reflect.Field f) {
+		return f.getAnnotation(Require.class) != null;
 	}
 	
-	private boolean addData(T t, String columnName, int rowNum, String value) {
-		Field[] fields = t.getClass().getDeclaredFields();
-			
-		for (Field field : fields) {
-			if ( field.isAnnotationPresent(Require.class) ) {
-				if ( value == null || value.length() == 0 ) {
-					return false;
-				}
-			}
-			if ( field.isAnnotationPresent(io.github.seccoding.excel.annotations.Field.class) ) {
-				io.github.seccoding.excel.annotations.Field annotation = 
-						field.getAnnotation(io.github.seccoding.excel.annotations.Field.class);
-				
-				String column = annotation.value();
-				if ( column.equalsIgnoreCase(columnName) ) {
-					int collectionType = getCollectionType(field, t);
-					if ( collectionType == ExcelRead.LIST ) {
-						List list = getList(field, t);
-						list.add(value);
-					}
-					else if ( collectionType == ExcelRead.MAP ) {
-						Map map = getMap(field, t);
-						map.put(columnName + rowNum, value);
-					}
-					else if ( collectionType == ExcelRead.SET ) {
-						Set set = getSet(field, t);
-						set.add(value);
-					}
-				}
-			}
-			
-		}
-		
-		return true;
-	}
-	
-	private int getCollectionType(Field f, T t) {
-		
-		if ( f.getType() == List.class ) {
-			return ExcelRead.LIST;
-		}
-		else if ( f.getType() == Map.class ) {
-			return ExcelRead.MAP;
-		}
-		else if ( f.getType() == Set.class ) {
-			return ExcelRead.SET;
-		}
-		
-		return -1;
-	}
-	
-	private List getList(Field f, T t) {
-		
-		List result = (List) getField(f, t);
-		if ( result == null ) {
-			result = new ArrayList();
-			set(f, result);
-		}
-		
-		return result;
-	}
-	
-	private Map getMap(Field f, T t) {
-		
-		Map result = (Map) getField(f, t);
-		if ( result == null ) {
-			result = new HashMap();
-			set(f, result);
-		}
-		
-		return result;
-	}
-	
-	private Set getSet(Field f, T t) {
-		
-		Set result = (Set) getField(f, t);
-		if ( result == null ) {
-			result = new HashSet();
-			set(f, result);
-		}
-		
-		return result;
-	}
-	
-	private Object getField(Field f, T t) {
-		f.setAccessible(true);
-		try {
-			return f.get(t);
-		} catch (IllegalArgumentException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
-	}
-	
-	public void set(Field f, Object obj) {
-		try {
-			f.set(t, obj);
-		} catch (IllegalArgumentException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
-	}
 	
 }

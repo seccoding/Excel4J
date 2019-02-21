@@ -84,6 +84,7 @@ public class ReadOption {
 		List<String> temp = new ArrayList<String>();
 		temp.addAll(outputColumns);
 		
+		this.outputColumns.clear();
 		this.outputColumns = temp;
 	}
 	
@@ -96,6 +97,8 @@ public class ReadOption {
 		if(this.outputColumns == null) {
 			this.outputColumns = new ArrayList<String>();
 		}
+		
+		this.outputColumns.clear();
 		
 		for(String ouputColumn : outputColumns) {
 			this.outputColumns.add(ouputColumn);
