@@ -13,6 +13,18 @@ public @interface Format {
 
 	public short alignment() default LEFT;
 	public short verticalAlignment() default V_CENTER;
+	public boolean bold() default false;
+	
+	public String dataFormat() default "";
+	
+	/**
+	 * <pre>
+	 * 변경하고자 하는 포멧
+	 * 
+	 * &#64;Field.date 의 값이 true일 때만 사용.
+	 * </pre>
+	 */
+	public String toDataFormat() default "";
 	
 	public static final short RIGHT = CellStyle.ALIGN_RIGHT;
 	public static final short LEFT = CellStyle.ALIGN_LEFT;

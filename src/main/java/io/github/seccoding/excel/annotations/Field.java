@@ -11,4 +11,6 @@ public @interface Field {
 
 	public String value();
 	
+	public boolean date() default false;
+	
 }

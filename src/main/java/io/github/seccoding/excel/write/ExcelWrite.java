@@ -1,12 +1,17 @@
 package io.github.seccoding.excel.write;
 
 import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import org.apache.poi.ss.format.CellFormat;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -98,12 +103,24 @@ public class ExcelWrite {
 
 		int cellIndex = 0;
 		if (values != null && values.size() > 0) {
-
-			for (Object arr : values) {
+			
+			while ( true ) {
+				Object obj = null;
+				try {
+					obj = values.get(0);
+				}
+				catch ( IndexOutOfBoundsException e ) {
+					break;
+				}
+				
+				if ( obj == null ) {
+					break;
+				}
+				
 				row = sheet.createRow(rowIndex++);
 				cellIndex = 0;
 
-				java.lang.reflect.Field[] fields = arr.getClass().getDeclaredFields();
+				java.lang.reflect.Field[] fields = obj.getClass().getDeclaredFields();
 				for (java.lang.reflect.Field f : fields) {
 					f.setAccessible(true);
 
@@ -113,12 +130,14 @@ public class ExcelWrite {
 						String title = anno.value();
 						cellIndex = getColumnIndex(title, writeOption);
 
-						fillValue(row, cellIndex, arr, f);
+						fillValue(row, cellIndex, obj, f, anno);
 					}
 
 				}
-
+				
+				values.remove(0);
 			}
+			
 		}
 
 	}
@@ -127,7 +146,7 @@ public class ExcelWrite {
 		return writeOption.getTitles().indexOf(title);
 	}
 
-	private static void fillValue(Row row, int cellIndex, Object arr, java.lang.reflect.Field f) {
+	private static void fillValue(Row row, int cellIndex, Object arr, java.lang.reflect.Field f, Field fieldAnnotation) {
 		Cell cell = null;
 		try {
 			Object obj = f.get(arr);
@@ -137,10 +156,27 @@ public class ExcelWrite {
 			style.setAlignment(format.alignment());
 			style.setVerticalAlignment(format.verticalAlignment());
 			
+			String formatString = format.dataFormat();
+			if ( !fieldAnnotation.date() && formatString != null && formatString.length() > 0 ) {
+				DataFormat dataFormat = wb.createDataFormat();
+				style.setDataFormat(dataFormat.getFormat(formatString));
+			}
+			
+			if ( format.bold() ) {
+				Font font = wb.createFont();
+				font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+				style.setFont(font);
+			}
+			
 			if (obj.getClass() == String.class) {
-
+				
 				String data = obj + "";
-				if (data.trim().startsWith("=")) {
+				if ( fieldAnnotation.date() ) {
+					data = makeDateTime(format, data);
+					cell = row.createCell(cellIndex);
+					cell.setCellValue(data);
+				}
+				else if (data.trim().startsWith("=")) {
 					data = data.trim().substring(1).trim();
 					cell = row.createCell(cellIndex, Cell.CELL_TYPE_FORMULA);
 					cell.setCellFormula(data);
@@ -148,6 +184,7 @@ public class ExcelWrite {
 					cell = row.createCell(cellIndex, Cell.CELL_TYPE_STRING);
 					cell.setCellValue(data);
 				}
+				
 			} else if (numericTypes.contains(obj.getClass())) {
 				cell = row.createCell(cellIndex, Cell.CELL_TYPE_NUMERIC);
 				cell.setCellValue(Double.parseDouble(String.valueOf(obj)));
@@ -167,6 +204,26 @@ public class ExcelWrite {
 		}
 	}
 
+	private static String makeDateTime(Format format, String data) {
+		String formatString = format.dataFormat();
+		if ( formatString == null || formatString.length() == 0 ) {
+			throw new RuntimeException("dataFormat이 지정되지 않았습니다.");
+		}
+		
+		formatString = formatString.trim();
+		
+		try {
+			Date date = new SimpleDateFormat(formatString).parse(data.trim());
+			String toDataFormat = format.toDataFormat();
+			if ( toDataFormat != null && toDataFormat.length() > 0  ) {
+				formatString = toDataFormat.trim();
+			}
+			return new SimpleDateFormat(formatString).format(date);
+		} catch (ParseException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
+	}
+	
 	private static File getFile(String fileName) {
 		return new File(downloadPath + fileName);
 	}

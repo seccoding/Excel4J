@@ -29,12 +29,13 @@ public class ExcelWriteTest {
 		titles.add("Title2");
 		titles.add("Title3");
 		titles.add("Title4");
+		titles.add("Title5");
 		wo.setTitles(titles);
 
 		List<TestVO> contents = new ArrayList<TestVO>();
-		contents.add(new TestVO(1, "ABC", true, "=1+1"));
-		contents.add(new TestVO(2, "DEF", true, "=2+2"));
-		contents.add(new TestVO(3, "HIJ", true, "=3+3"));
+		contents.add(new TestVO(111111111, "ABC", true, "=1+1", "2019-02-21"));
+		contents.add(new TestVO(2222222, "DEF", true, "=2+2", "2019-02-21"));
+		contents.add(new TestVO(33333, "HIJ", true, "=3+3", "2019-02-21"));
 		wo.setContents(contents);
 
 		File excelFile = ExcelWrite.write(wo);
@@ -42,28 +43,34 @@ public class ExcelWriteTest {
 
 	@ExcelSheet("TestSheet")
 	public static class TestVO {
-		
+
 		@Field("Title1")
-		@Format(alignment=Format.LEFT, verticalAlignment=Format.V_TOP)
+		@Format(alignment = Format.LEFT, verticalAlignment = Format.V_CENTER, bold = true, dataFormat = "#,###")
 		private int id;
-		
+
 		@Field("Title2")
-		@Format(alignment=Format.LEFT, verticalAlignment=Format.V_TOP)
+		@Format(alignment = Format.LEFT, verticalAlignment = Format.V_CENTER)
 		private String content;
-		
+
 		@Field("Title3")
-		@Format(alignment=Format.LEFT, verticalAlignment=Format.V_TOP)
+		@Format(alignment = Format.LEFT, verticalAlignment = Format.V_CENTER)
 		private boolean isTrue;
-		
+
 		@Field("Title4")
-		@Format(alignment=Format.CENTER, verticalAlignment=Format.V_TOP)
+		@Format(alignment = Format.CENTER, verticalAlignment = Format.V_CENTER)
 		private String formula;
 
-		public TestVO(int id, String content, boolean isTrue, String formula) {
+		@Field(value = "Title5", date = true)
+//		@Format(dataFormat = "yyyy-MM-dd") // 2019-02-21
+		@Format(dataFormat = "yyyy-MM-dd", toDataFormat="dd-MM-yyyy") // 21-02-2019
+		private String date;
+
+		public TestVO(int id, String content, boolean isTrue, String formula, String date) {
 			this.id = id;
 			this.content = content;
 			this.isTrue = isTrue;
 			this.formula = formula;
+			this.date = date;
 		}
 
 		public int getId() {
@@ -96,6 +103,14 @@ public class ExcelWriteTest {
 
 		public void setFormula(String formula) {
 			this.formula = formula;
+		}
+
+		public String getDate() {
+			return date;
+		}
+
+		public void setDate(String date) {
+			this.date = date;
 		}
 
 	}

@@ -12,13 +12,13 @@ import io.github.seccoding.excel.read.ExcelRead;
 public class ExcelReadTest {
 
 	private static ReadOption ro = new ReadOption();
-	private static String filePath = "Excel File Path";
+	private static String filePath = "C:\\Users\\mcjan\\Desktop\\ktds Table Descriptor.xlsx";
 	
 	public static void main(String[] args) {
 
 		ro.setFilePath(filePath);
-		ro.setOutputColumns("A", "B", "C", "D", "E", "F");
-		ro.setStartRow(1);
+		ro.setOutputColumns("B", "C", "F");
+		ro.setStartRow(6);
 //		ro.setSheetName("Sheet1");
 		
 		test1();
@@ -32,13 +32,13 @@ public class ExcelReadTest {
 	@Deprecated
 	public static void test1() {
 		System.out.println("test1");
-		ro.setSheetName("Sheet1");
+		ro.setSheetName("ADMIN");
 		Map<String, String> result = new ExcelRead().read(ro);
 
 		System.out.println(result);
-		System.out.println(result.get("A3"));
-		System.out.println(result.get("B3"));
-		System.out.println(result.get("C3"));
+		System.out.println(result.get("B7"));
+		System.out.println(result.get("C7"));
+		System.out.println(result.get("F7"));
 	}
 
 	@Deprecated
@@ -68,14 +68,14 @@ public class ExcelReadTest {
 	@Deprecated
 	public static void test4() {
 		System.out.println("test4");
-		ro.setSheetName("Sheet1");
+		ro.setSheetName("ADMIN");
 		String result = new ExcelRead().getValue(ro, "B3");
 		System.out.println(result);
 	}
 	
 	public static void test5() {
 		System.out.println("test5");
-		String result = new ExcelRead().getValue(filePath, "Sheet1", "B3");
+		String result = new ExcelRead().getValue(filePath, "ADMIN", "B3");
 		System.out.println(result);
 	}
 	
@@ -85,18 +85,18 @@ public class ExcelReadTest {
 		System.out.println(result);
 	}
 
-	@ExcelSheet("Sheet1")
+	@ExcelSheet("ADMIN")
 	@Deprecated
 	public static class TestClass {
 
-		@Field("A")
+		@Field("B")
 		@Require // 값이 항상 존재하는 컬럼을 지정. 탐색 ROW를 지정할 때 사용.
 		private List<String> no;
 
-		@Field("B")
+		@Field("C")
 		private List<String> columnName;
 
-		@Field("C")
+		@Field("F")
 		private List<String> type;
 
 		public List<String> getNo() {
@@ -125,17 +125,17 @@ public class ExcelReadTest {
 
 	}
 
-	@ExcelSheet("Sheet1")
+	@ExcelSheet("ADMIN")
 	public static class TestClass2 {
 
-		@Field("A")
+		@Field("H")
 		@Require // 값이 항상 존재하는 컬럼을 지정. 탐색 ROW를 지정할 때 사용.
 		private String no;
 
-		@Field("B")
+		@Field("J")
 		private String columnName;
 
-		@Field("C")
+		@Field("M")
 		private String type;
 
 		public String getNo() {
