@@ -4,12 +4,15 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.ss.format.CellFormat;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
 import io.github.seccoding.excel.annotations.Field;
+import io.github.seccoding.excel.annotations.Format;
 import io.github.seccoding.excel.option.WriteOption;
 import io.github.seccoding.excel.util.MakeWorkBook;
 import io.github.seccoding.excel.util.WriteFileSystem;
@@ -39,6 +42,8 @@ public class ExcelWrite {
 	 */
 	private static String downloadPath = null;
 
+	private static Workbook wb;
+	
 	/**
 	 * 엑셀 문서에 만들어질 Sheet
 	 */
@@ -57,7 +62,7 @@ public class ExcelWrite {
 	 */
 	public static File write(WriteOption<?> writeOption) {
 
-		Workbook wb = MakeWorkBook.getWorkbook(writeOption.getFileName());
+		wb = MakeWorkBook.getWorkbook(writeOption.getFileName());
 		sheet = wb.createSheet(writeOption.getSheetName());
 		setTitle(writeOption.getTitles());
 		setContents(writeOption);
@@ -126,7 +131,12 @@ public class ExcelWrite {
 		Cell cell = null;
 		try {
 			Object obj = f.get(arr);
-
+			Format format = f.getAnnotation(Format.class);
+			
+			CellStyle style = wb.createCellStyle();
+			style.setAlignment(format.alignment());
+			style.setVerticalAlignment(format.verticalAlignment());
+			
 			if (obj.getClass() == String.class) {
 
 				String data = obj + "";
@@ -145,7 +155,11 @@ public class ExcelWrite {
 				cell = row.createCell(cellIndex, Cell.CELL_TYPE_BOOLEAN);
 				cell.setCellValue(Boolean.parseBoolean(obj + ""));
 			}
-			sheet.autoSizeColumn(cellIndex);
+			
+			if ( cell != null ) {
+				sheet.autoSizeColumn(cellIndex);
+				cell.setCellStyle(style);
+			}
 		} catch (IllegalArgumentException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		} catch (IllegalAccessException e) {

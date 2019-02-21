@@ -6,6 +6,7 @@ import java.util.List;
 
 import io.github.seccoding.excel.annotations.ExcelSheet;
 import io.github.seccoding.excel.annotations.Field;
+import io.github.seccoding.excel.annotations.Format;
 import io.github.seccoding.excel.option.WriteOption;
 import io.github.seccoding.excel.write.ExcelWrite;
 
@@ -43,15 +44,19 @@ public class ExcelWriteTest {
 	public static class TestVO {
 		
 		@Field("Title1")
+		@Format(alignment=Format.LEFT, verticalAlignment=Format.V_TOP)
 		private int id;
 		
 		@Field("Title2")
+		@Format(alignment=Format.LEFT, verticalAlignment=Format.V_TOP)
 		private String content;
 		
 		@Field("Title3")
+		@Format(alignment=Format.LEFT, verticalAlignment=Format.V_TOP)
 		private boolean isTrue;
 		
 		@Field("Title4")
+		@Format(alignment=Format.CENTER, verticalAlignment=Format.V_TOP)
 		private String formula;
 
 		public TestVO(int id, String content, boolean isTrue, String formula) {
