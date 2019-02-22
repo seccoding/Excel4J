@@ -3,13 +3,13 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.github.seccoding</groupId>
-	<artifactId>Excel4Java</artifactId>
-	<version>2.1.1</version>
+	<artifactId>Excel4J</artifactId>
+	<version>2.1.2</version>
 	<packaging>jar</packaging>
 
 	<name>Excel Utility</name>
 	<description>Excel Utility</description>
-	<url>https://github.com/seccoding/Excel</url>
+	<url>https://github.com/seccoding/Excel4J</url>
 
 	<developers>
 		<developer>
@@ -19,13 +19,13 @@
 	</developers>
 
 	<scm>
-		<url>https://github.com/seccoding/Excel.git</url>
+		<url>https://github.com/seccoding/Excel4J.git</url>
 	</scm>
 
 	<distributionManagement>
 		<repository>
-			<id>Excel</id>
-			<url>https://api.bintray.com/maven/mcjang1116/io.github.seccoding/Excel/;publish=1</url>
+			<id>Excel4J</id>
+			<url>https://api.bintray.com/maven/mcjang1116/io.github.seccoding/Excel4J/;publish=1</url>
 		</repository>
 	</distributionManagement>
 
@@ -33,7 +33,7 @@
 		<java.version>1.8</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<bintray.repo>mcjang1116/io.github.seccoding</bintray.repo>
-		<bintray.package>Excel</bintray.package>
+		<bintray.package>Excel4J</bintray.package>
 	</properties>
 
 	<licenses>
