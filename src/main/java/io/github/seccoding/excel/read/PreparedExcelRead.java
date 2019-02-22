@@ -1,15 +1,12 @@
 package io.github.seccoding.excel.read;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.util.CellReference;
 
 import io.github.seccoding.excel.annotations.ExcelSheet;
 import io.github.seccoding.excel.annotations.Field;
@@ -54,6 +51,8 @@ public class PreparedExcelRead<T> {
 	private Workbook wb;
 	protected Sheet sheet;
 	
+	private String sheetName;
+	
 	private int numOfRows;
 	private int numOfCells;
 	
@@ -77,9 +76,8 @@ public class PreparedExcelRead<T> {
 					
 					cell = row.getCell(cellIndex);
 					cellName = CellReferenceUtil.getName(cell, cellIndex);
-					
-					if( !readOption.getOutputColumns().contains(cellName) ) {
-						continue;
+					if( readOption.isOverOutputColumnIndex(cellName) ) {
+						break;
 					}
 					
 					if ( addData != null ) {
@@ -128,6 +126,9 @@ public class PreparedExcelRead<T> {
 	}
 	
 	protected void setup(String filePath, String sheetName) {
+		
+		this.sheetName = sheetName;
+		
 		getWorkbook(filePath);
 		
 		if ( sheetName == null || sheetName.length() == 0 ) {
@@ -145,8 +146,11 @@ public class PreparedExcelRead<T> {
 		if ( readOption.getSheetName() == null ) {
 			extractSheetName();
 		}
-		if ( readOption.getOutputColumns() == null ) {
+		if ( readOption.getOutputColumns().isEmpty() ) {
 			extractOutputColumns(readOption);
+		}
+		if ( readOption.getStartRow() <= 0 ) {
+			extractStratRow(readOption);
 		}
 		setNumOfRowsAndCells();
 	}
@@ -158,7 +162,6 @@ public class PreparedExcelRead<T> {
 	private void extractSheetName() {
 		ExcelSheet sheet = clazz.getAnnotation(ExcelSheet.class);
 		
-		String sheetName = null;
 		if ( sheet != null ) {
 			sheetName = sheet.value();
 		}
@@ -193,6 +196,15 @@ public class PreparedExcelRead<T> {
 		}
 		
 		readOption.setOutputColumns(outputColumns);
+	}
+	
+	private void extractStratRow(ReadOption readOption) {
+		
+		ExcelSheet sheet = clazz.getAnnotation(ExcelSheet.class);
+		
+		if ( sheet != null ) {
+			readOption.setStartRow( sheet.startRow() );
+		}
 		
 	}
 	
@@ -209,6 +221,9 @@ public class PreparedExcelRead<T> {
 	}
 	
 	private void setNumOfRowsAndCells() {
+		if ( sheet == null ) {
+			throw new RuntimeException("Can not find sheet [" + this.sheetName + "]");
+		}
 		numOfRows = sheet.getPhysicalNumberOfRows();
 		numOfCells = 0;
 	}

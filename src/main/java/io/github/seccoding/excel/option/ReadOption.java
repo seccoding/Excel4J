@@ -3,6 +3,8 @@ package io.github.seccoding.excel.option;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.ss.util.CellReference;
+
 /**
  * Excel(xls, xlsx) 파일을 읽을 때, 필요한 옵션을 정의한다. 
  * 여기에 정의된 옵션들을 사용해서 실제 파일을 읽어 온다.
@@ -25,6 +27,8 @@ public class ReadOption {
 	 * Excel에서 읽어올 Column.
 	 */
 	private List<String> outputColumns;
+	
+	private List<Short> outputColumnIndex;
 	
 	/**
 	 * Excel에서 추출을 시작하고 싶은 Row.
@@ -70,13 +74,43 @@ public class ReadOption {
 	public List<String> getOutputColumns() {
 		
 		if ( this.outputColumns == null ) {
-			return null;
+			return new ArrayList<String>();
 		}
 		
 		List<String> temp = new ArrayList<String>();
 		temp.addAll(outputColumns);
 		
 		return temp;
+	}
+	
+	private List<Short> makeAndGetOutputColumnIndex() {
+		if ( this.outputColumns == null ) {
+			return new ArrayList<Short>();
+		}
+		
+		outputColumnIndex = new ArrayList<Short>();
+		
+		for (String column : outputColumns) {
+			CellReference cr = new CellReference(column + "1");
+			outputColumnIndex.add(cr.getCol());
+		}
+		
+		return outputColumnIndex;
+		
+	}
+	
+	public boolean isOverOutputColumnIndex(String columnName) {
+		columnName = columnName.replaceAll("[0-9]", "");
+		CellReference cr = new CellReference(columnName + "1");
+		
+		short col = cr.getCol();
+		
+		for(short outputIndex : outputColumnIndex) {
+			if ( col <= outputIndex ) {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	/**
@@ -99,6 +133,8 @@ public class ReadOption {
 		
 		this.outputColumns.clear();
 		this.outputColumns = temp;
+		
+		this.makeAndGetOutputColumnIndex();
 	}
 	
 	/**
@@ -122,6 +158,8 @@ public class ReadOption {
 		for(String ouputColumn : outputColumns) {
 			this.outputColumns.add(ouputColumn);
 		}
+		
+		this.makeAndGetOutputColumnIndex();
 	}
 	
 	/**

@@ -12,13 +12,13 @@ import io.github.seccoding.excel.read.ExcelRead;
 public class ExcelReadTest {
 
 	private static ReadOption ro = new ReadOption();
-	private static String filePath = "C:\\Users\\mcjan\\Desktop\\ktds Table Descriptor.xlsx";
+	private static String filePath = "Excel File Path";
 	
 	public static void main(String[] args) {
 
 		ro.setFilePath(filePath);
-		ro.setOutputColumns("B", "C", "F");
-		ro.setStartRow(6);
+		ro.setOutputColumns("B", "C", "D");
+		ro.setStartRow(1);
 //		ro.setSheetName("Sheet1");
 		
 		test1();
@@ -32,13 +32,13 @@ public class ExcelReadTest {
 	@Deprecated
 	public static void test1() {
 		System.out.println("test1");
-		ro.setSheetName("ADMIN");
+		ro.setSheetName("Sheet1");
 		Map<String, String> result = new ExcelRead().read(ro);
 
 		System.out.println(result);
 		System.out.println(result.get("B7"));
 		System.out.println(result.get("C7"));
-		System.out.println(result.get("F7"));
+		System.out.println(result.get("D7"));
 	}
 
 	@Deprecated
@@ -47,7 +47,7 @@ public class ExcelReadTest {
 		
 		ro.setOutputColumns(null); // TestClass의 @Field로 대체
 		ro.setSheetName(null); // TestClass의 @ExcelSheet() 로 대체
-		
+		ro.setStartRow(0); // TestClass의 @ExcelSheet() 로 대체
 		TestClass result = new ExcelRead<TestClass>().readToObject(ro, TestClass.class);
 
 		System.out.println(result.getNo().size());
@@ -60,6 +60,7 @@ public class ExcelReadTest {
 		
 		ro.setOutputColumns(null); // TestClass의 @Field로 대체
 		ro.setSheetName(null); // TestClass의 @ExcelSheet() 로 대체
+		ro.setStartRow(0); // TestClass의 @ExcelSheet() 로 대체
 		
 		List<TestClass2> result = new ExcelRead<TestClass2>().readToList(ro, TestClass2.class);
 		System.out.println(result.size());
@@ -68,14 +69,14 @@ public class ExcelReadTest {
 	@Deprecated
 	public static void test4() {
 		System.out.println("test4");
-		ro.setSheetName("ADMIN");
+		ro.setSheetName("Sheet1");
 		String result = new ExcelRead().getValue(ro, "B3");
 		System.out.println(result);
 	}
 	
 	public static void test5() {
 		System.out.println("test5");
-		String result = new ExcelRead().getValue(filePath, "ADMIN", "B3");
+		String result = new ExcelRead().getValue(filePath, "Sheet1", "B3");
 		System.out.println(result);
 	}
 	
@@ -85,7 +86,7 @@ public class ExcelReadTest {
 		System.out.println(result);
 	}
 
-	@ExcelSheet("ADMIN")
+	@ExcelSheet(value="Sheet1", startRow=1)
 	@Deprecated
 	public static class TestClass {
 
@@ -96,7 +97,7 @@ public class ExcelReadTest {
 		@Field("C")
 		private List<String> columnName;
 
-		@Field("F")
+		@Field("D")
 		private List<String> type;
 
 		public List<String> getNo() {
@@ -125,17 +126,17 @@ public class ExcelReadTest {
 
 	}
 
-	@ExcelSheet("ADMIN")
+	@ExcelSheet(value="Sheet1", startRow=1)
 	public static class TestClass2 {
 
-		@Field("H")
+		@Field("B")
 		@Require // 값이 항상 존재하는 컬럼을 지정. 탐색 ROW를 지정할 때 사용.
 		private String no;
 
-		@Field("J")
+		@Field("C")
 		private String columnName;
 
-		@Field("M")
+		@Field("D")
 		private String type;
 
 		public String getNo() {

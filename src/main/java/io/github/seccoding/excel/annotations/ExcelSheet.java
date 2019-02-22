@@ -9,6 +9,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ExcelSheet {
 
-	public String value();
+	public String value() default "Sheet1";
+	
+	public int startRow() default 1;
 	
 }

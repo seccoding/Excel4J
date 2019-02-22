@@ -152,6 +152,7 @@ public class Add {
 		}
 		if ( collectionType == INTEGER ) {
 			Integer intg = Integer.parseInt(String.valueOf(collection));
+			return intg;
 		}
 		if ( collectionType == LONG ) {
 			Long lng = Long.parseLong(String.valueOf(collection));

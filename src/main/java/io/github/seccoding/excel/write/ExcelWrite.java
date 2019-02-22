@@ -29,18 +29,6 @@ import io.github.seccoding.excel.util.WriteFileSystem;
  */
 public class ExcelWrite {
 
-	private static List<Class<?>> numericTypes;
-
-	static {
-		numericTypes = new ArrayList<Class<?>>();
-		numericTypes.add(Byte.class);
-		numericTypes.add(Short.class);
-		numericTypes.add(Integer.class);
-		numericTypes.add(Long.class);
-		numericTypes.add(Float.class);
-		numericTypes.add(Double.class);
-	}
-
 	/**
 	 * 엑셀 파일이 쓰여질 경로. WriteOption 에서 가져온다.
 	 */
@@ -128,8 +116,8 @@ public class ExcelWrite {
 
 						String title = anno.value();
 						cellIndex = getColumnIndex(title, writeOption);
-
-						fillValue(row, cellIndex, obj, f, anno);
+						MakeCell makeCell = new MakeCell(obj, anno, row, cellIndex);
+						makeCell.fillValue(wb, sheet, f);
 					}
 
 				}
@@ -145,83 +133,6 @@ public class ExcelWrite {
 		return writeOption.getTitles().indexOf(title);
 	}
 
-	private static void fillValue(Row row, int cellIndex, Object arr, java.lang.reflect.Field f, Field fieldAnnotation) {
-		Cell cell = null;
-		try {
-			Object obj = f.get(arr);
-			Format format = f.getAnnotation(Format.class);
-			
-			CellStyle style = wb.createCellStyle();
-			style.setAlignment(format.alignment());
-			style.setVerticalAlignment(format.verticalAlignment());
-			
-			String formatString = format.dataFormat();
-			if ( !fieldAnnotation.date() && formatString != null && formatString.length() > 0 ) {
-				DataFormat dataFormat = wb.createDataFormat();
-				style.setDataFormat(dataFormat.getFormat(formatString));
-			}
-			
-			if ( format.bold() ) {
-				Font font = wb.createFont();
-				font.setBoldweight(Font.BOLDWEIGHT_BOLD);
-				style.setFont(font);
-			}
-			
-			if (obj.getClass() == String.class) {
-				
-				String data = obj + "";
-				if ( fieldAnnotation.date() ) {
-					data = makeDateTime(format, data);
-					cell = row.createCell(cellIndex);
-					cell.setCellValue(data);
-				}
-				else if (data.trim().startsWith("=")) {
-					data = data.trim().substring(1).trim();
-					cell = row.createCell(cellIndex, Cell.CELL_TYPE_FORMULA);
-					cell.setCellFormula(data);
-				} else {
-					cell = row.createCell(cellIndex, Cell.CELL_TYPE_STRING);
-					cell.setCellValue(data);
-				}
-				
-			} else if (numericTypes.contains(obj.getClass())) {
-				cell = row.createCell(cellIndex, Cell.CELL_TYPE_NUMERIC);
-				cell.setCellValue(Double.parseDouble(String.valueOf(obj)));
-			} else if (obj.getClass() == Boolean.class) {
-				cell = row.createCell(cellIndex, Cell.CELL_TYPE_BOOLEAN);
-				cell.setCellValue(Boolean.parseBoolean(obj + ""));
-			}
-			
-			if ( cell != null ) {
-				sheet.autoSizeColumn(cellIndex);
-				cell.setCellStyle(style);
-			}
-		} catch (IllegalArgumentException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
-	}
-
-	private static String makeDateTime(Format format, String data) {
-		String formatString = format.dataFormat();
-		if ( formatString == null || formatString.length() == 0 ) {
-			throw new RuntimeException("dataFormat이 지정되지 않았습니다.");
-		}
-		
-		formatString = formatString.trim();
-		
-		try {
-			Date date = new SimpleDateFormat(formatString).parse(data.trim());
-			String toDataFormat = format.toDataFormat();
-			if ( toDataFormat != null && toDataFormat.length() > 0  ) {
-				formatString = toDataFormat.trim();
-			}
-			return new SimpleDateFormat(formatString).format(date);
-		} catch (ParseException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
-	}
 	
 	private static File getFile(String fileName) {
 		return new File(downloadPath + fileName);
