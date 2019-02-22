@@ -4,7 +4,12 @@
 Java 에서 엑셀파일을 읽고 쓰는 유틸리티<br/>
 xls 와 xlsx를 모두 지원함.
 
-<a href="#release-note">Release Note</a>
+## 바로가기
+<a href="#release-note">Release Note</a><br/>
+<a href="#사용-방법">사용 방법</a><br/>
+<a href="#excel-file-읽기">Excel File 읽기</a><br/>
+<a href="#excel-file-쓰기">Excel File 쓰기</a>
+
 
 ## Release Note
 ### 2.1.1 (2019.02.22)
