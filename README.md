@@ -18,7 +18,7 @@ xls 와 xlsx를 모두 지원함.
 > Modify
 > - WriteOption.setSheetName() 대신 @ExcelSheet 로 대체
 > - ReadOption.setSheetName() 대신 @ExcelSheet로 대체
-> - ReadOption.setOutputColumns() 대신 @field로 대체
+> - ReadOption.setOutputColumns() 대신 @Field로 대체
 > - ReadOption.setStartRow() 대신 @ExcelSheet로 대체
 
 ### 2.1.0 (2019.02.21)
