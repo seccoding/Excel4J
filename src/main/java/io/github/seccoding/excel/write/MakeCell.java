@@ -65,27 +65,6 @@ public class MakeCell {
 		}
 	}
 	
-	private CellStyle makeCellStyle(Workbook wb) {
-		
-		CellStyle style = wb.createCellStyle();
-		style.setAlignment(format.alignment());
-		style.setVerticalAlignment(format.verticalAlignment());
-		
-		String formatString = format.dataFormat();
-		if ( !fieldAnnotation.date() && formatString != null && formatString.length() > 0 ) {
-			DataFormat dataFormat = wb.createDataFormat();
-			style.setDataFormat(dataFormat.getFormat(formatString));
-		}
-		
-		if ( format.bold() ) {
-			Font font = wb.createFont();
-			font.setBoldweight(Font.BOLDWEIGHT_BOLD);
-			style.setFont(font);
-		}
-		
-		return style;
-	}
-	
 	private Cell makeCellAndFill() {
 		Cell cell = null;
 		if (obj.getClass() == String.class) {
@@ -135,4 +114,26 @@ public class MakeCell {
 			throw new RuntimeException(e.getMessage(), e);
 		}
 	}
+	
+	private CellStyle makeCellStyle(Workbook wb) {
+		
+		CellStyle style = wb.createCellStyle();
+		style.setAlignment(format.alignment());
+		style.setVerticalAlignment(format.verticalAlignment());
+		
+		String formatString = format.dataFormat();
+		if ( !fieldAnnotation.date() && formatString != null && formatString.length() > 0 ) {
+			DataFormat dataFormat = wb.createDataFormat();
+			style.setDataFormat(dataFormat.getFormat(formatString));
+		}
+		
+		if ( format.bold() ) {
+			Font font = wb.createFont();
+			font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+			style.setFont(font);
+		}
+		
+		return style;
+	}
+	
 }
