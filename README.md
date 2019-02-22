@@ -87,7 +87,7 @@ xls 와 xlsx를 모두 지원함.
 ---
 ## Excel File 읽기 
 <a href="#바로가기">상위로 가기</a>
-<pre>
+```java
 import java.util.List;
 import java.util.Map;
 
@@ -120,7 +120,7 @@ public class ExcelReadTest {
 		ro.setSheetName("Sheet1");
 		ro.setOutputColumns("B", "C", "D");
 		ro.setStartRow(1);
-		Map&lt;String, String> result = new ExcelRead().read(ro);
+		Map<String, String> result = new ExcelRead().read(ro);
 
 		System.out.println(result);
 		System.out.println(result.get("B7"));
@@ -135,7 +135,7 @@ public class ExcelReadTest {
 		ro.setOutputColumns(null); // TestClass의 @Field로 대체
 		ro.setSheetName(null); // TestClass의 @ExcelSheet() 로 대체
 		ro.setStartRow(0); // TestClass의 @ExcelSheet() 로 대체
-		TestClass result = new ExcelRead&lt;TestClass>().readToObject(ro, TestClass.class);
+		TestClass result = new ExcelRead<TestClass>().readToObject(ro, TestClass.class);
 
 		System.out.println(result.getNo().size());
 		System.out.println(result.getColumnName().size());
@@ -149,7 +149,7 @@ public class ExcelReadTest {
 		ro.setSheetName(null); // TestClass의 @ExcelSheet() 로 대체
 		ro.setStartRow(0); // TestClass의 @ExcelSheet() 로 대체
 		
-		List&lt;TestClass2> result = new ExcelRead&lt;TestClass2>().readToList(ro, TestClass2.class);
+		List<TestClass2> result = new ExcelRead<TestClass2>().readToList(ro, TestClass2.class);
 		System.out.println(result.size());
 	}
 
@@ -179,35 +179,35 @@ public class ExcelReadTest {
 
 		@Field("B")
 		@Require // 값이 항상 존재하는 컬럼을 지정. 탐색 ROW를 지정할 때 사용.
-		private List&lt;String> no;
+		private List<String> no;
 
 		@Field("C")
-		private List&lt;String> columnName;
+		private List<String> columnName;
 
 		@Field("D")
-		private List&lt;String> type;
+		private List<String> type;
 
-		public List&lt;String> getNo() {
+		public List<String> getNo() {
 			return no;
 		}
 
-		public void setNo(List&lt;String> no) {
+		public void setNo(List<String> no) {
 			this.no = no;
 		}
 
-		public List&lt;String> getColumnName() {
+		public List<String> getColumnName() {
 			return columnName;
 		}
 
-		public void setColumnName(List&lt;String> columnName) {
+		public void setColumnName(List<String> columnName) {
 			this.columnName = columnName;
 		}
 
-		public List&lt;String> getType() {
+		public List<String> getType() {
 			return type;
 		}
 
-		public void setType(List&lt;String> type) {
+		public void setType(List<String> type) {
 			this.type = type;
 		}
 
@@ -253,18 +253,19 @@ public class ExcelReadTest {
 	}
 
 }
-</pre>
+```
 
 ---
 ## Excel File 쓰기 
 <a href="#바로가기">상위로 가기</a>
-<pre>
-
+```java
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.github.seccoding.excel.annotations.ExcelSheet;
 import io.github.seccoding.excel.annotations.Field;
+import io.github.seccoding.excel.annotations.Format;
 import io.github.seccoding.excel.option.WriteOption;
 import io.github.seccoding.excel.write.ExcelWrite;
 
@@ -277,46 +278,58 @@ public class ExcelWriteTest {
 
 	public static void main(String[] args) {
 
-		WriteOption&lt;TestVO> wo = new WriteOption&lt;TestVO>();
-		wo.setSheetName("Test");
+		WriteOption<TestVO> wo = new WriteOption<TestVO>();
+//		wo.setSheetName("Test"); @ExcelSheet()로 교체
 		wo.setFileName("test.xlsx");
 		wo.setFilePath("C:\\Users\\mcjan\\Desktop");
 
-		List&lt;String> titles = new ArrayList&lt;String>();
+		List<String> titles = new ArrayList<String>();
 		titles.add("Title1");
 		titles.add("Title2");
 		titles.add("Title3");
 		titles.add("Title4");
+		titles.add("Title5");
 		wo.setTitles(titles);
 
-		List&lt;TestVO> contents = new ArrayList&lt;TestVO>();
-		contents.add(new TestVO(1, "ABC", true, "=1+1"));
-		contents.add(new TestVO(2, "DEF", true, "=2+2"));
-		contents.add(new TestVO(3, "HIJ", true, "=3+3"));
+		List<TestVO> contents = new ArrayList<TestVO>();
+		contents.add(new TestVO(111111111, "ABC", true, "=1+1", "2019-02-21"));
+		contents.add(new TestVO(2222222, "DEF", true, "=2+2", "2019-02-21"));
+		contents.add(new TestVO(33333, "HIJ", true, "=3+3", "2019-02-21"));
 		wo.setContents(contents);
 
 		File excelFile = ExcelWrite.write(wo);
 	}
 
+	@ExcelSheet("TestSheet")
 	public static class TestVO {
-		
+
 		@Field("Title1")
+		@Format(alignment = Format.LEFT, verticalAlignment = Format.V_CENTER, bold = true, dataFormat = "#,###")
 		private int id;
-		
+
 		@Field("Title2")
+		@Format(alignment = Format.LEFT, verticalAlignment = Format.V_CENTER)
 		private String content;
-		
+
 		@Field("Title3")
+		@Format(alignment = Format.LEFT, verticalAlignment = Format.V_CENTER)
 		private boolean isTrue;
-		
+
 		@Field("Title4")
+		@Format(alignment = Format.CENTER, verticalAlignment = Format.V_CENTER)
 		private String formula;
 
-		public TestVO(int id, String content, boolean isTrue, String formula) {
+		@Field(value = "Title5", date = true)
+//		@Format(dataFormat = "yyyy-MM-dd") // 2019-02-21
+		@Format(dataFormat = "yyyy-MM-dd", toDataFormat="dd-MM-yyyy") // 21-02-2019
+		private String date;
+
+		public TestVO(int id, String content, boolean isTrue, String formula, String date) {
 			this.id = id;
 			this.content = content;
 			this.isTrue = isTrue;
 			this.formula = formula;
+			this.date = date;
 		}
 
 		public int getId() {
@@ -351,10 +364,17 @@ public class ExcelWriteTest {
 			this.formula = formula;
 		}
 
+		public String getDate() {
+			return date;
+		}
+
+		public void setDate(String date) {
+			this.date = date;
+		}
+
 	}
 
 }
-
-</pre>
+```
 
 <a href="#바로가기">상위로 가기</a>
