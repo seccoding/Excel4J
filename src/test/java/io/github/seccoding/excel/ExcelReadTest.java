@@ -17,9 +17,6 @@ public class ExcelReadTest {
 	public static void main(String[] args) {
 
 		ro.setFilePath(filePath);
-		ro.setOutputColumns("B", "C", "D");
-		ro.setStartRow(1);
-//		ro.setSheetName("Sheet1");
 		
 		test1();
 		test2();
@@ -33,6 +30,8 @@ public class ExcelReadTest {
 	public static void test1() {
 		System.out.println("test1");
 		ro.setSheetName("Sheet1");
+		ro.setOutputColumns("B", "C", "D");
+		ro.setStartRow(1);
 		Map<String, String> result = new ExcelRead().read(ro);
 
 		System.out.println(result);

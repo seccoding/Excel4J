@@ -1,10 +1,26 @@
-[ ![Download](https://api.bintray.com/packages/mcjang1116/io.github.seccoding/Excel/images/download.svg?version=2.1.0) ](https://bintray.com/mcjang1116/io.github.seccoding/Excel/2.1.0/link)
+[ ![Download](https://api.bintray.com/packages/mcjang1116/io.github.seccoding/Excel/images/download.svg?version=2.1.1) ](https://bintray.com/mcjang1116/io.github.seccoding/Excel/2.1.1/link)
 
 # Excel
 Java 에서 엑셀파일을 읽고 쓰는 유틸리티<br/>
 xls 와 xlsx를 모두 지원함.
 
 ## Release Note
+### 2.1.1 (2019.02.22)
+> Deprecated
+> - ExcelRead.getValue(ReadOption readOption, String cellName)
+> 
+> Make New
+> - ExcelRead.getValue(String filePath, String cellName): String
+> - ExcelRead.getValue(String filePath, String sheetName, String cellName): String
+> - @ExcelSheet Annotation
+> - @Format Annotation
+> 
+> Modify
+> - WriteOption.setSheetName() 대신 @ExcelSheet 로 대체
+> - ReadOption.setSheetName() 대신 @ExcelSheet로 대체
+> - ReadOption.setOutputColumns() 대신 @field로 대체
+> - ReadOption.setStartRow() 대신 @ExcelSheet로 대체
+
 ### 2.1.0 (2019.02.21)
 > 1. ExcelRead.read(ReadOption readOption):Map<String, String> is deprecated.
 > 2. ExcelRead.readToObject(ReadOption readOption, Class<?> clazz):T is deprecated
@@ -33,18 +49,18 @@ xls 와 xlsx를 모두 지원함.
    &lt;dependency&gt;
 &nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;io.github.seccoding&lt;/groupId&gt;
 &nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;Excel&lt;/artifactId&gt;
-&nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;2.1.0&lt;/version&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;2.1.1&lt;/version&gt;
 	&lt;/dependency&gt;
    </pre>
    
-### maven dependency에 Excel-2.1.0.jar 파일을 추가할 경우
-1. Excel-2.1.0.jar파일을 C:\에 복사합니다.
-1. Maven 명령어를 이용해 .m2 Repository 에 Excel-2.1.0.jar 를 설치(저장)합니다.<pre>mvn install:install-file -Dfile=C:\Excel-2.1.0.jar -DgroupId=io.github.seccoding -DartifactId=Excel -Dversion=2.1.0 -Dpackaging=jar</pre>
+### maven dependency에 Excel-2.1.1.jar 파일을 추가할 경우
+1. Excel-2.1.1.jar파일을 C:\에 복사합니다.
+1. Maven 명령어를 이용해 .m2 Repository 에 Excel-2.1.1.jar 를 설치(저장)합니다.<pre>mvn install:install-file -Dfile=C:\Excel-2.1.1.jar -DgroupId=io.github.seccoding -DartifactId=Excel -Dversion=2.1.1 -Dpackaging=jar</pre>
 1. 본인의 Project/pom.xml 에 dependency를 추가합니다.<pre>
 	&lt;dependency&gt;
 	&nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;io.github.seccoding&lt;/groupId&gt;
 	&nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;Excel&lt;/artifactId&gt;
-	&nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;2.1.0&lt;/version&gt;
+	&nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;2.1.1&lt;/version&gt;
 	&lt;/dependency&gt;
 </pre>
 
@@ -56,10 +72,10 @@ xls 와 xlsx를 모두 지원함.
 ---
 ## Excel File 읽기
 <pre>
-
 import java.util.List;
 import java.util.Map;
 
+import io.github.seccoding.excel.annotations.ExcelSheet;
 import io.github.seccoding.excel.annotations.Field;
 import io.github.seccoding.excel.annotations.Require;
 import io.github.seccoding.excel.option.ReadOption;
@@ -67,81 +83,92 @@ import io.github.seccoding.excel.read.ExcelRead;
 
 public class ExcelReadTest {
 
-	static ReadOption ro = new ReadOption();
-
+	private static ReadOption ro = new ReadOption();
+	private static String filePath = "Excel File Path";
+	
 	public static void main(String[] args) {
 
-		ro.setFilePath("Excel File Path");
-		ro.setOutputColumns("A", "B", "C", "D", "E", "F");
-		ro.setStartRow(1);
-		ro.setSheetName("Sheet1");
-
+		ro.setFilePath(filePath);
+		
 		test1();
 		test2();
 		test3();
 		test4();
+		test5();
+		test6();
 	}
 
 	@Deprecated
 	public static void test1() {
 		System.out.println("test1");
+		ro.setSheetName("Sheet1");
+		ro.setOutputColumns("B", "C", "D");
+		ro.setStartRow(1);
 		Map&lt;String, String> result = new ExcelRead().read(ro);
 
 		System.out.println(result);
-		System.out.println(result.get("A3"));
-		System.out.println(result.get("B3"));
-		System.out.println(result.get("C3"));
+		System.out.println(result.get("B7"));
+		System.out.println(result.get("C7"));
+		System.out.println(result.get("D7"));
 	}
 
 	@Deprecated
 	public static void test2() {
 		System.out.println("test2");
 		
-		ro.setOutputColumns("A", "B", "C");
+		ro.setOutputColumns(null); // TestClass의 @Field로 대체
+		ro.setSheetName(null); // TestClass의 @ExcelSheet() 로 대체
+		ro.setStartRow(0); // TestClass의 @ExcelSheet() 로 대체
 		TestClass result = new ExcelRead&lt;TestClass>().readToObject(ro, TestClass.class);
 
 		System.out.println(result.getNo().size());
 		System.out.println(result.getColumnName().size());
 		System.out.println(result.getType().size());
-
-		System.out.print(result.getNo().get(result.getNo().size() - 1));
-		System.out.print(" / " + result.getColumnName().get(result.getColumnName().size() - 1));
-		System.out.println(" / " + result.getType().get(result.getType().size() - 1));
 	}
 	
 	public static void test3() {
 		System.out.println("test3");
 		
-		ro.setOutputColumns("A", "B", "C");
+		ro.setOutputColumns(null); // TestClass의 @Field로 대체
+		ro.setSheetName(null); // TestClass의 @ExcelSheet() 로 대체
+		ro.setStartRow(0); // TestClass의 @ExcelSheet() 로 대체
+		
 		List&lt;TestClass2> result = new ExcelRead&lt;TestClass2>().readToList(ro, TestClass2.class);
 		System.out.println(result.size());
-		
-		for (TestClass2 testClass2 : result) {
-			System.out.print(testClass2.getNo());
-			System.out.print(" / " + testClass2.getColumnName());
-			System.out.println(" / " + testClass2.getType());
-		}
-		
-	}
-
-	public static void test4() {
-		System.out.println("test4");
-		ro.setOutputColumns("B");
-		String result = new ExcelRead().getValue(ro, "B3");
-		System.out.println(result);
 	}
 
 	@Deprecated
+	public static void test4() {
+		System.out.println("test4");
+		ro.setSheetName("Sheet1");
+		String result = new ExcelRead().getValue(ro, "B3");
+		System.out.println(result);
+	}
+	
+	public static void test5() {
+		System.out.println("test5");
+		String result = new ExcelRead().getValue(filePath, "Sheet1", "B3");
+		System.out.println(result);
+	}
+	
+	public static void test6() {
+		System.out.println("test6");
+		String result = new ExcelRead().getValue(filePath, "B3");
+		System.out.println(result);
+	}
+
+	@ExcelSheet(value="Sheet1", startRow=1)
+	@Deprecated
 	public static class TestClass {
 
-		@Field("A")
+		@Field("B")
 		@Require // 값이 항상 존재하는 컬럼을 지정. 탐색 ROW를 지정할 때 사용.
 		private List&lt;String> no;
 
-		@Field("B")
+		@Field("C")
 		private List&lt;String> columnName;
 
-		@Field("C")
+		@Field("D")
 		private List&lt;String> type;
 
 		public List&lt;String> getNo() {
@@ -170,16 +197,17 @@ public class ExcelReadTest {
 
 	}
 
+	@ExcelSheet(value="Sheet1", startRow=1)
 	public static class TestClass2 {
 
-		@Field("A")
+		@Field("B")
 		@Require // 값이 항상 존재하는 컬럼을 지정. 탐색 ROW를 지정할 때 사용.
 		private String no;
 
-		@Field("B")
+		@Field("C")
 		private String columnName;
 
-		@Field("C")
+		@Field("D")
 		private String type;
 
 		public String getNo() {
