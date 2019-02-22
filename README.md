@@ -1,6 +1,6 @@
-[ ![Download](https://api.bintray.com/packages/mcjang1116/io.github.seccoding/Excel/images/download.svg?version=2.1.1) ](https://bintray.com/mcjang1116/io.github.seccoding/Excel/2.1.1/link)
+[ ![Download](https://api.bintray.com/packages/mcjang1116/io.github.seccoding/Excel4J/images/download.svg?version=2.1.1) ](https://bintray.com/mcjang1116/io.github.seccoding/Excel4J/2.1.1/link)
 
-# Excel
+# Excel4J
 Java 에서 엑셀파일을 읽고 쓰는 유틸리티<br/>
 xls 와 xlsx를 모두 지원함.
 
@@ -61,19 +61,19 @@ xls 와 xlsx를 모두 지원함.
 1. dependency 추가<pre>
    &lt;dependency&gt;
 &nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;io.github.seccoding&lt;/groupId&gt;
-&nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;Excel&lt;/artifactId&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;Excel4J&lt;/artifactId&gt;
 &nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;2.1.1&lt;/version&gt;
 	&lt;/dependency&gt;
    </pre>
    
-### maven dependency에 Excel-2.1.1.jar 파일을 추가할 경우 
+### maven dependency에 Excel4J-2.1.1.jar 파일을 추가할 경우 
 <a href="#바로가기">상위로 가기</a>
-1. Excel-2.1.1.jar파일을 C:\에 복사합니다.
-1. Maven 명령어를 이용해 .m2 Repository 에 Excel-2.1.1.jar 를 설치(저장)합니다.<pre>mvn install:install-file -Dfile=C:\Excel-2.1.1.jar -DgroupId=io.github.seccoding -DartifactId=Excel -Dversion=2.1.1 -Dpackaging=jar</pre>
+1. Excel4J-2.1.1.jar파일을 C:\에 복사합니다.
+1. Maven 명령어를 이용해 .m2 Repository 에 Excel4J-2.1.1.jar 를 설치(저장)합니다.<pre>mvn install:install-file -Dfile=C:\Excel4J-2.1.1.jar -DgroupId=io.github.seccoding -DartifactId=Excel4J -Dversion=2.1.1 -Dpackaging=jar</pre>
 1. 본인의 Project/pom.xml 에 dependency를 추가합니다.<pre>
 	&lt;dependency&gt;
 	&nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;io.github.seccoding&lt;/groupId&gt;
-	&nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;Excel&lt;/artifactId&gt;
+	&nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;Excel4J&lt;/artifactId&gt;
 	&nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;2.1.1&lt;/version&gt;
 	&lt;/dependency&gt;
 </pre>
@@ -82,8 +82,8 @@ xls 와 xlsx를 모두 지원함.
 <a href="#바로가기">상위로 가기</a>
 1. Clone or Download 를 클릭합니다.
 1. Download ZIP 을 클릭해 소스코드를 다운로드 받습니다.
-1. Excel/pom.xml의 dependencies를 본인의 Project/pom.xml 에 붙혀넣습니다.
-1. Excel/src 이하의 자바코드를 본인의 Project에 붙혀넣습니다. 
+1. Excel4J/pom.xml의 dependencies를 본인의 Project/pom.xml 에 붙혀넣습니다.
+1. Excel4J/src 이하의 자바코드를 본인의 Project에 붙혀넣습니다. 
 ---
 ## Excel File 읽기 
 <a href="#바로가기">상위로 가기</a>
