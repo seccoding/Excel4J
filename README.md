@@ -42,8 +42,8 @@ xls 와 xlsx를 모두 지원함.
 > 2. WriteOption<T>.setContents(List<T> contents); 추가
 > 2-1. String[] 대신 Data Class 로 사용함.
 
-## 사용 방법 <
-a href="#바로가기">상위로 가기</a>
+## 사용 방법
+<a href="#바로가기">상위로 가기</a>
 ### maven 사용 
 <a href="#바로가기">상위로 가기</a>
 1. Repository 추가<pre>
