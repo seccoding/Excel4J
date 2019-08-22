@@ -11,15 +11,11 @@ public class AutoSizingColumns {
 		if (WriteShare.sheet instanceof SXSSFSheet) {
 			((SXSSFSheet) WriteShare.sheet).trackAllColumnsForAutoSizing();
 		}
+
+		Row row = WriteShare.sheet.getRow(0);
 		
-		int rowCount = WriteShare.sheet.getLastRowNum();
-		
-		for ( int i = 0; i < rowCount; i++ ) {
-			Row row = WriteShare.sheet.getRow(i);
-			
-			for ( int j = 0; j < row.getLastCellNum(); j++ ) {
-				WriteShare.sheet.autoSizeColumn(j);
-			}
+		for ( int j = 0; j < row.getLastCellNum(); j++ ) {
+			WriteShare.sheet.autoSizeColumn(j);
 		}
 	}
 	
