@@ -1,4 +1,4 @@
-package io.github.seccoding.excel.util;
+package io.github.seccoding.excel.util.read;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -8,9 +8,15 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-public class GetWorkBook {
+import io.github.seccoding.excel.util.read.share.ReadShare;
+import io.github.seccoding.excel.util.write.FileType;
 
-	@SuppressWarnings("resource")
+public class GetWorkbook {
+
+	public static void get(String filePath) {
+		ReadShare.wb = getWorkbook(filePath);
+	}
+	
 	public static Workbook getWorkbook(String filePath) {
 
 		FileInputStream fis = null;
@@ -19,12 +25,19 @@ public class GetWorkBook {
 		} catch (FileNotFoundException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
-
+		
 		if (FileType.isXls(filePath)) {
 			try {
 				return new HSSFWorkbook(fis);
 			} catch (IOException e) {
 				throw new RuntimeException(e.getMessage(), e);
+			} finally {
+				if ( fis != null ) {
+					try {
+						fis.close();
+					}
+					catch(IOException e1) {}
+				}
 			}
 		}  
 		if (FileType.isXlsx(filePath)) {
@@ -32,11 +45,24 @@ public class GetWorkBook {
 				return new XSSFWorkbook(fis);
 			} catch (IOException e) {
 				throw new RuntimeException(e.getMessage(), e);
+			} finally {
+				if ( fis != null ) {
+					try {
+						fis.close();
+					}
+					catch(IOException e1) {}
+				}
 			}
+		}
+		
+		if ( fis != null ) {
+			try {
+				fis.close();
+			}
+			catch(IOException e1) {}
 		}
 		
 		throw new RuntimeException(filePath + " isn't excel file format");
 		
 	}
-
 }

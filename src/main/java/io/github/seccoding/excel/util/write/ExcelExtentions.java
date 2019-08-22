@@ -1,4 +1,4 @@
-package io.github.seccoding.excel.util;
+package io.github.seccoding.excel.util.write;
 
 public interface ExcelExtentions {
 

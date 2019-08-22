@@ -7,6 +7,7 @@ import java.util.List;
 
 import io.github.seccoding.excel.annotations.ExcelSheet;
 
+
 /**
  * Excel(xls, xlsx) 파일을 쓸 때, 필요한 옵션을 정의한다.
  * 여기에 정의된 옵션으로 실제 파일을 작성한다.
@@ -80,6 +81,10 @@ public class WriteOption<T> {
 	 * @param String 확장자를 포함한 엑셀 파일의 이름
 	 */
 	public void setFileName(String fileName) {
+		
+		fileName = fileName.replace("/", "_")
+							.replace("\\", "_");
+		
 		this.fileName = File.separator + fileName;
 	}
 	/**

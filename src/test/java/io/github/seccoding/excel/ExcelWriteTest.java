@@ -7,6 +7,7 @@ import java.util.List;
 import io.github.seccoding.excel.annotations.ExcelSheet;
 import io.github.seccoding.excel.annotations.Field;
 import io.github.seccoding.excel.annotations.Format;
+import io.github.seccoding.excel.annotations.Title;
 import io.github.seccoding.excel.option.WriteOption;
 import io.github.seccoding.excel.write.ExcelWrite;
 
@@ -20,17 +21,8 @@ public class ExcelWriteTest {
 	public static void main(String[] args) {
 
 		WriteOption<TestVO> wo = new WriteOption<TestVO>();
-//		wo.setSheetName("Test"); @ExcelSheet()로 교체
 		wo.setFileName("test.xlsx");
-		wo.setFilePath("C:\\Users\\mcjan\\Desktop");
-
-		List<String> titles = new ArrayList<String>();
-		titles.add("Title1");
-		titles.add("Title2");
-		titles.add("Title3");
-		titles.add("Title4");
-		titles.add("Title5");
-		wo.setTitles(titles);
+		wo.setFilePath("C:\\Users\\mcjan\\Desktop\\");
 
 		List<TestVO> contents = new ArrayList<TestVO>();
 		contents.add(new TestVO(111111111, "ABC", true, "=1+1", "2019-02-21"));
@@ -41,26 +33,26 @@ public class ExcelWriteTest {
 		File excelFile = ExcelWrite.write(wo);
 	}
 
-	@ExcelSheet("TestSheet")
+	@ExcelSheet(value="TestSheet", useTitle = true)
 	public static class TestVO {
 
-		@Field("Title1")
+		@Title("Title1")
 		@Format(alignment = Format.LEFT, verticalAlignment = Format.V_CENTER, bold = true, dataFormat = "#,###")
 		private int id;
 
-		@Field("Title2")
+		@Title("Title2")
 		@Format(alignment = Format.LEFT, verticalAlignment = Format.V_CENTER)
 		private String content;
 
-		@Field("Title3")
+		@Title("Title3")
 		@Format(alignment = Format.LEFT, verticalAlignment = Format.V_CENTER)
 		private boolean isTrue;
 
-		@Field("Title4")
+		@Title("Title4")
 		@Format(alignment = Format.CENTER, verticalAlignment = Format.V_CENTER)
 		private String formula;
 
-		@Field(value = "Title5", date = true)
+		@Title(value = "Title5", date = true)
 //		@Format(dataFormat = "yyyy-MM-dd") // 2019-02-21
 		@Format(dataFormat = "yyyy-MM-dd", toDataFormat="dd-MM-yyyy") // 21-02-2019
 		private String date;

@@ -5,14 +5,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.apache.poi.ss.usermodel.CellStyle;
-
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Format {
 
-	public short alignment() default LEFT;
-	public short verticalAlignment() default V_CENTER;
+	public String alignment() default LEFT;
+	public String verticalAlignment() default V_CENTER;
 	public boolean bold() default false;
 	
 	public String dataFormat() default "";
@@ -26,12 +24,12 @@ public @interface Format {
 	 */
 	public String toDataFormat() default "";
 	
-	public static final short RIGHT = CellStyle.ALIGN_RIGHT;
-	public static final short LEFT = CellStyle.ALIGN_LEFT;
-	public static final short CENTER = CellStyle.ALIGN_CENTER;
+	public static final String RIGHT = "RIGHT";
+	public static final String LEFT = "LEFT";
+	public static final String CENTER = "CENTER";
 	
-	public static final short V_TOP = CellStyle.VERTICAL_TOP;
-	public static final short V_BOTTOM = CellStyle.VERTICAL_BOTTOM;
-	public static final short V_CENTER = CellStyle.VERTICAL_CENTER;
+	public static final String V_TOP = "V_TOP";
+	public static final String V_BOTTOM = "V_BOTTOM";
+	public static final String V_CENTER = "V_CENTER";
 	
 }

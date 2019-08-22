@@ -5,6 +5,10 @@ import java.util.List;
 
 import org.apache.poi.ss.util.CellReference;
 
+import io.github.seccoding.excel.annotations.ExcelSheet;
+import io.github.seccoding.excel.annotations.Field;
+
+
 /**
  * Excel(xls, xlsx) 파일을 읽을 때, 필요한 옵션을 정의한다. 
  * 여기에 정의된 옵션들을 사용해서 실제 파일을 읽어 온다.
@@ -177,6 +181,37 @@ public class ReadOption {
 	 */
 	public void setStartRow(int startRow) {
 		this.startRow = startRow;
+	}
+	
+	public void extractOutputColumns(Class<?> clazz) {
+		
+		if ( getOutputColumns().isEmpty() ) {
+			
+			List<String> outputColumns = new ArrayList<String>();
+			java.lang.reflect.Field[] fields = clazz.getDeclaredFields();
+			
+			for (java.lang.reflect.Field f : fields) {
+				Field field = f.getAnnotation(Field.class);
+				
+				if ( field != null ) {
+					String column = f.getAnnotation(Field.class).value();
+					if ( column != null && column.length() > 0 ) {
+						outputColumns.add(column);
+					}				
+				}
+			}
+			
+			this.setOutputColumns(outputColumns);
+		}
+	}
+	
+	public void extractStratRow(Class<?> clazz) {
+		if ( getStartRow() <= 0 ) {
+			ExcelSheet sheet = clazz.getAnnotation(ExcelSheet.class);
+			if ( sheet != null ) {
+				this.setStartRow( sheet.startRow() );
+			}
+		}
 	}
 	
 }

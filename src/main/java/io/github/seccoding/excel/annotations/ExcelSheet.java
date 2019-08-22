@@ -13,4 +13,6 @@ public @interface ExcelSheet {
 	
 	public int startRow() default 1;
 	
+	public boolean useTitle() default false;
+	
 }
