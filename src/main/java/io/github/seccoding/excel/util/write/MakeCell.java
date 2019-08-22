@@ -68,7 +68,6 @@ public class MakeCell {
 			CellStyle cellStyle = makeCellStyle(WriteShare.wb);
 			
 			if ( cell != null ) {
-				//sheet.autoSizeColumn(cellIndex);
 				cell.setCellStyle(cellStyle);
 			}
 		} catch (IllegalArgumentException e) {

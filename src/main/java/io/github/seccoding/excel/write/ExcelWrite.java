@@ -2,7 +2,10 @@ package io.github.seccoding.excel.write;
 
 import java.io.File;
 
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+
 import io.github.seccoding.excel.option.WriteOption;
+import io.github.seccoding.excel.util.write.AutoSizingColumns;
 import io.github.seccoding.excel.util.write.MakeContents;
 import io.github.seccoding.excel.util.write.MakeTitle;
 import io.github.seccoding.excel.util.write.MakeWorkBook;
@@ -35,6 +38,8 @@ public class ExcelWrite {
 		
 		MakeTitle.make();
 		MakeContents.make();
+		
+		AutoSizingColumns.resize();
 		
 		downloadPath = WriteFileSystem.write();
 		WriteShare.resetRowIndex();
