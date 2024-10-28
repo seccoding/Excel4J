@@ -11,6 +11,8 @@ public @interface Field {
 
 	public String value();
 	
-	public boolean date() default false;
+	public boolean isDate() default false;
+	
+	public String dateFormat() default "yyyy-MM-dd";
 	
 }

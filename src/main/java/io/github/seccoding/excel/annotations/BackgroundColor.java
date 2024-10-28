@@ -5,10 +5,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.apache.poi.ss.usermodel.IndexedColors;
+
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Title {
+public @interface BackgroundColor {
 
-	public String value();
+	public IndexedColors value();
 	
 }
