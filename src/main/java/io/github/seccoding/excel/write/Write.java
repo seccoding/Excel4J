@@ -46,6 +46,11 @@ public class Write<T> extends WriteBody<T> {
 					fos.close();
 				} catch (IOException e) {}
 			}
+			
+			try {
+				super.workbook.close();
+			} catch (IOException e) {
+			}
 		}
 	}
 
