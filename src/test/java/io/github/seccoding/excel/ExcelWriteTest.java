@@ -39,7 +39,7 @@ public class ExcelWriteTest {
 	@Border(value = BorderStyle.MEDIUM, color = IndexedColors.RED)
 	public static class TestVO {
 
-		@Title(value="Title1", merge=@Merge(rows=2, cols=1))
+		@Title(value="Title1")
 		@BackgroundColor(IndexedColors.BLACK)
 		@Text(color = IndexedColors.WHITE, bold = true) 
 		@Align(value=HorizontalAlignment.CENTER, verticalAlignment = VerticalAlignment.TOP)
@@ -51,7 +51,7 @@ public class ExcelWriteTest {
 		@Align(value=HorizontalAlignment.RIGHT, verticalAlignment = VerticalAlignment.CENTER)
 		private String content;
 
-		@Title(value="Title3", merge=@Merge(value="Header Title", rows=2, cols=4))
+		@Title(value="Title3")
 		@BackgroundColor(IndexedColors.RED)
 		@Text(color = IndexedColors.YELLOW)
 		@Align(value=HorizontalAlignment.LEFT, verticalAlignment = VerticalAlignment.BOTTOM)

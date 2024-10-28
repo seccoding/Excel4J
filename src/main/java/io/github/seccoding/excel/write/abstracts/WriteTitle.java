@@ -97,9 +97,8 @@ public abstract class WriteTitle<T> extends WriteWorkbook<T> {
 		for (Field field : fields) {
 			if (field.isAnnotationPresent(Title.class)) {
 				Title title = field.getAnnotation(Title.class);
-				Merge merge = title.merge();
 				if (title.ignoreTitle()) {
-					cellIndex+= merge.rows()-1;
+					cellIndex++;
 					continue;
 				}
 				
