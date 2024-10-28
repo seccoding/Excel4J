@@ -10,5 +10,8 @@ import java.lang.annotation.Target;
 public @interface Title {
 
 	public String value();
+	public boolean ignoreTitle() default false;
+	public boolean appendPrevRow() default false;
 	
+	public Merge merge() default @Merge;
 }

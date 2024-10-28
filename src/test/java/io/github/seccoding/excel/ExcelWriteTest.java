@@ -13,6 +13,7 @@ import io.github.seccoding.excel.annotations.Align;
 import io.github.seccoding.excel.annotations.BackgroundColor;
 import io.github.seccoding.excel.annotations.Border;
 import io.github.seccoding.excel.annotations.ExcelSheet;
+import io.github.seccoding.excel.annotations.Merge;
 import io.github.seccoding.excel.annotations.Text;
 import io.github.seccoding.excel.annotations.Title;
 import io.github.seccoding.excel.write.Write;
@@ -38,30 +39,30 @@ public class ExcelWriteTest {
 	@Border(value = BorderStyle.MEDIUM, color = IndexedColors.RED)
 	public static class TestVO {
 
-		@Title("Title1")
+		@Title(value="Title1", merge=@Merge(rows=2, cols=1))
 		@BackgroundColor(IndexedColors.BLACK)
 		@Text(color = IndexedColors.WHITE, bold = true) 
 		@Align(value=HorizontalAlignment.CENTER, verticalAlignment = VerticalAlignment.TOP)
 		private int id;
 
-		@Title("Title2")
+		@Title(value="Title2")
 		@BackgroundColor(IndexedColors.WHITE)
 		@Text(color = IndexedColors.RED)
 		@Align(value=HorizontalAlignment.RIGHT, verticalAlignment = VerticalAlignment.CENTER)
 		private String content;
 
-		@Title("Title3")
+		@Title(value="Title3", merge=@Merge(value="Header Title", rows=2, cols=4))
 		@BackgroundColor(IndexedColors.RED)
 		@Text(color = IndexedColors.YELLOW)
 		@Align(value=HorizontalAlignment.LEFT, verticalAlignment = VerticalAlignment.BOTTOM)
 		private boolean isTrue;
 
-		@Title("Title4")
+		@Title(value="Title4")
 		@BackgroundColor(IndexedColors.BLUE)
 		@Text(color = IndexedColors.BLUE_GREY)
 		private String formula;
 
-		@Title("Title5")
+		@Title(value="Title5")
 		@BackgroundColor(IndexedColors.YELLOW)
 		@Text(color = IndexedColors.BROWN, bold = true)
 		private String date;
