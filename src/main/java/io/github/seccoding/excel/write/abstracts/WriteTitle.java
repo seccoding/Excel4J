@@ -20,7 +20,7 @@ public abstract class WriteTitle<T> extends WriteWorkbook<T> {
 		this.contents = contents;
 	}
 
-	private void makeParentTitleRow() {
+	private void makeMergeTitleRow() {
 		Row row = super.sheet.createRow(super.writeStartRow);
 		int cellIndex = 0;
 		
@@ -56,18 +56,8 @@ public abstract class WriteTitle<T> extends WriteWorkbook<T> {
 					}
 					super.sheet.addMergedRegion(new CellRangeAddress( row.getRowNum(), endRowIndex, cellIndex, endColIndex ));
 					
-					if (super.borderStyle != null) {
-						cell.setCellStyle(super.borderStyle);
-					}
-					if (super.backgroundStyle.containsKey(field.getName())) {
-						cell.setCellStyle(super.backgroundStyle.get(field.getName()));
-					}
-					if (super.textStyle.containsKey(field.getName())) {
-						cell.setCellStyle(super.textStyle.get(field.getName()));
-					}
-					if (super.alignStyle.containsKey(field.getName())) {
-						cell.setCellStyle(super.alignStyle.get(field.getName()));
-					}
+					setCellStyle(cell, field);
+					
 					cellIndex += merge.cols();
 				}
 			}
@@ -86,7 +76,7 @@ public abstract class WriteTitle<T> extends WriteWorkbook<T> {
 	}
 	
 	protected void makeMainTitleRow() {
-		makeParentTitleRow();
+		makeMergeTitleRow();
 		
 		Row row = super.sheet.createRow(this.nextRowIndex);
 		int cellIndex = 0;
@@ -113,18 +103,7 @@ public abstract class WriteTitle<T> extends WriteWorkbook<T> {
 				
 				cell.setCellValue(title.value());
 				
-				if (super.borderStyle != null) {
-					cell.setCellStyle(super.borderStyle);
-				}
-				if (super.backgroundStyle.containsKey(field.getName())) {
-					cell.setCellStyle(super.backgroundStyle.get(field.getName()));
-				}
-				if (super.textStyle.containsKey(field.getName())) {
-					cell.setCellStyle(super.textStyle.get(field.getName()));
-				}
-				if (super.alignStyle.containsKey(field.getName())) {
-					cell.setCellStyle(super.alignStyle.get(field.getName()));
-				}
+				setCellStyle(cell, field);
 				cellIndex++;
 			}
 		}
@@ -134,6 +113,21 @@ public abstract class WriteTitle<T> extends WriteWorkbook<T> {
 		}
 		
 		this.nextRowIndex = this.sheet.getPhysicalNumberOfRows();
+	}
+	
+	protected void setCellStyle(Cell cell, Field field) {
+		if (super.borderStyle != null) {
+			cell.setCellStyle(super.borderStyle);
+		}
+		if (super.backgroundStyle.containsKey(field.getName())) {
+			cell.setCellStyle(super.backgroundStyle.get(field.getName()));
+		}
+		if (super.textStyle.containsKey(field.getName())) {
+			cell.setCellStyle(super.textStyle.get(field.getName()));
+		}
+		if (super.alignStyle.containsKey(field.getName())) {
+			cell.setCellStyle(super.alignStyle.get(field.getName()));
+		}
 	}
 	
 }

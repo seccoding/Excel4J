@@ -26,18 +26,7 @@ public abstract class WriteBody<T> extends WriteTitle<T> {
 				if (field.isAnnotationPresent(Title.class)) {
 					
 					Cell cell = row.createCell(cellIndex);
-					if (super.borderStyle != null) {
-						cell.setCellStyle(super.borderStyle);
-					}
-					if (super.backgroundStyle.containsKey(field.getName())) {
-						cell.setCellStyle(super.backgroundStyle.get(field.getName()));
-					}
-					if (super.textStyle.containsKey(field.getName())) {
-						cell.setCellStyle(super.textStyle.get(field.getName()));
-					}
-					if (super.alignStyle.containsKey(field.getName())) {
-						cell.setCellStyle(super.alignStyle.get(field.getName()));
-					}
+					super.setCellStyle(cell, field);
 					
 					Method getter = InstanceUtil.getMethod(t, "get", field.getName());
 					Object value = InstanceUtil.invokeMethod(t, getter);
