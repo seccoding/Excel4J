@@ -13,7 +13,6 @@ import io.github.seccoding.excel.annotations.Align;
 import io.github.seccoding.excel.annotations.BackgroundColor;
 import io.github.seccoding.excel.annotations.Border;
 import io.github.seccoding.excel.annotations.ExcelSheet;
-import io.github.seccoding.excel.annotations.Merge;
 import io.github.seccoding.excel.annotations.Text;
 import io.github.seccoding.excel.annotations.Title;
 import io.github.seccoding.excel.write.Write;

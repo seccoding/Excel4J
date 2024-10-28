@@ -1,5 +1,3 @@
-[ ![Download](https://api.bintray.com/packages/mcjang1116/io.github.seccoding/Excel4J/images/download.svg?version=2.1.2) ](https://bintray.com/mcjang1116/io.github.seccoding/Excel4J/2.1.2/link)
-
 # Excel4J
 Java 에서 엑셀파일을 읽고 쓰는 유틸리티<br/>
 xls 와 xlsx를 모두 지원함.
@@ -13,6 +11,13 @@ xls 와 xlsx를 모두 지원함.
 
 ## Release Note 
 <a href="#바로가기">상위로 가기</a>
+### 3.0.0 (2024.10.28) 
+<a href="#바로가기">상위로 가기</a>
+> 전체 구조 변경
+> - static 제거.
+> - WriteOption, ReadOption 제거.
+> - bintray 서비스 종료로 DependencyRepository 제거.
+
 ### 2.1.2 (2019.02.22) 
 <a href="#바로가기">상위로 가기</a>
 > Deprecated
@@ -44,37 +49,15 @@ xls 와 xlsx를 모두 지원함.
 
 ## 사용 방법
 <a href="#바로가기">상위로 가기</a>
-### maven 사용 
-<a href="#바로가기">상위로 가기</a>
-1. Repository 추가<pre>
-   &lt;repositories&gt;
-&nbsp;&nbsp;&nbsp;&nbsp;&lt;repository&gt;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;id&gt;bintray&lt;/id&gt;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;url&gt;http://jcenter.bintray.com</url&gt;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;snapshots&gt;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;enabled&gt;false&lt;/enabled&gt;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/snapshots&gt;
-&nbsp;&nbsp;&nbsp;&nbsp;&lt;/repository&gt;
-&lt;/repositories&gt;
-   </pre>
-   
-1. dependency 추가<pre>
-   &lt;dependency&gt;
-&nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;io.github.seccoding&lt;/groupId&gt;
-&nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;Excel4J&lt;/artifactId&gt;
-&nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;2.1.2&lt;/version&gt;
-	&lt;/dependency&gt;
-   </pre>
-   
 ### maven dependency에 Excel4J-2.1.2.jar 파일을 추가할 경우 
 <a href="#바로가기">상위로 가기</a>
-1. Excel4J-2.1.2.jar파일을 C:\에 복사합니다.
-1. Maven 명령어를 이용해 .m2 Repository 에 Excel4J-2.1.2.jar 를 설치(저장)합니다.<pre>mvn install:install-file -Dfile=C:\Excel4J-2.1.2.jar -DgroupId=io.github.seccoding -DartifactId=Excel4J -Dversion=2.1.2 -Dpackaging=jar</pre>
+1. Excel4J-3.0.0.jar파일을 C:\에 복사합니다.
+1. Maven 명령어를 이용해 .m2 Repository 에 Excel4J-3.0.0.jar 를 설치(저장)합니다.<pre>mvn install:install-file -Dfile=C:\Excel4J-3.0.0.jar -DgroupId=io.github.seccoding -DartifactId=Excel4J -Dversion=3.0.0 -Dpackaging=jar</pre>
 1. 본인의 Project/pom.xml 에 dependency를 추가합니다.<pre>
 	&lt;dependency&gt;
 	&nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;io.github.seccoding&lt;/groupId&gt;
 	&nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;Excel4J&lt;/artifactId&gt;
-	&nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;2.1.2&lt;/version&gt;
+	&nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;3.0.0&lt;/version&gt;
 	&lt;/dependency&gt;
 </pre>
 
@@ -88,142 +71,39 @@ xls 와 xlsx를 모두 지원함.
 ## Excel File 읽기 
 <a href="#바로가기">상위로 가기</a>
 ```java
+import java.io.File;
 import java.util.List;
-import java.util.Map;
 
 import io.github.seccoding.excel.annotations.ExcelSheet;
 import io.github.seccoding.excel.annotations.Field;
-import io.github.seccoding.excel.annotations.Require;
-import io.github.seccoding.excel.option.ReadOption;
-import io.github.seccoding.excel.read.ExcelRead;
+import io.github.seccoding.excel.read.Read;
 
 public class ExcelReadTest {
 
-	private static ReadOption ro = new ReadOption();
-	private static String filePath = "Excel File Path";
-	
 	public static void main(String[] args) {
-
-		ro.setFilePath(filePath);
+		File file = new File("/Users/codemakers/Desktop", "Test.xlsx");
 		
-		test1();
-		test2();
-		test3();
-		test4();
-		test5();
-		test6();
-	}
-
-	@Deprecated
-	public static void test1() {
-		System.out.println("test1");
-		ro.setSheetName("Sheet1");
-		ro.setOutputColumns("B", "C", "D");
-		ro.setStartRow(1);
-		Map<String, String> result = new ExcelRead().read(ro);
-
-		System.out.println(result);
-		System.out.println(result.get("B7"));
-		System.out.println(result.get("C7"));
-		System.out.println(result.get("D7"));
-	}
-
-	@Deprecated
-	public static void test2() {
-		System.out.println("test2");
+		Read<TestClass> read = new Read<>(file.toPath(), TestClass.class);
+		List<TestClass> result = read.read();
 		
-		ro.setOutputColumns(null); // TestClass의 @Field로 대체
-		ro.setSheetName(null); // TestClass의 @ExcelSheet() 로 대체
-		ro.setStartRow(0); // TestClass의 @ExcelSheet() 로 대체
-		TestClass result = new ExcelRead<TestClass>().readToObject(ro, TestClass.class);
-
-		System.out.println(result.getNo().size());
-		System.out.println(result.getColumnName().size());
-		System.out.println(result.getType().size());
-	}
-	
-	public static void test3() {
-		System.out.println("test3");
+		result.forEach(tc -> {
+			System.out.println(tc.getColumnName());
+			System.out.println(tc.getNo());
+			System.out.println(tc.getType());
+		});
 		
-		ro.setOutputColumns(null); // TestClass의 @Field로 대체
-		ro.setSheetName(null); // TestClass의 @ExcelSheet() 로 대체
-		ro.setStartRow(0); // TestClass의 @ExcelSheet() 로 대체
-		
-		List<TestClass2> result = new ExcelRead<TestClass2>().readToList(ro, TestClass2.class);
-		System.out.println(result.size());
 	}
 
-	@Deprecated
-	public static void test4() {
-		System.out.println("test4");
-		ro.setSheetName("Sheet1");
-		String result = new ExcelRead().getValue(ro, "B3");
-		System.out.println(result);
-	}
-	
-	public static void test5() {
-		System.out.println("test5");
-		String result = new ExcelRead().getValue(filePath, "Sheet1", "B3");
-		System.out.println(result);
-	}
-	
-	public static void test6() {
-		System.out.println("test6");
-		String result = new ExcelRead().getValue(filePath, "B3");
-		System.out.println(result);
-	}
-
-	@ExcelSheet(value="Sheet1", startRow=1)
-	@Deprecated
+	@ExcelSheet(startRow=1)
 	public static class TestClass {
 
 		@Field("B")
-		@Require // 값이 항상 존재하는 컬럼을 지정. 탐색 ROW를 지정할 때 사용.
-		private List<String> no;
-
-		@Field("C")
-		private List<String> columnName;
-
-		@Field("D")
-		private List<String> type;
-
-		public List<String> getNo() {
-			return no;
-		}
-
-		public void setNo(List<String> no) {
-			this.no = no;
-		}
-
-		public List<String> getColumnName() {
-			return columnName;
-		}
-
-		public void setColumnName(List<String> columnName) {
-			this.columnName = columnName;
-		}
-
-		public List<String> getType() {
-			return type;
-		}
-
-		public void setType(List<String> type) {
-			this.type = type;
-		}
-
-	}
-
-	@ExcelSheet(value="Sheet1", startRow=1)
-	public static class TestClass2 {
-
-		@Field("B")
-		@Require // 값이 항상 존재하는 컬럼을 지정. 탐색 ROW를 지정할 때 사용.
 		private String no;
 
 		@Field("C")
 		private String columnName;
 
-		@Field("D")
+		@Field(value="E", isDate = true)
 		private String type;
 
 		public String getNo() {
@@ -249,10 +129,9 @@ public class ExcelReadTest {
 		public void setType(String type) {
 			this.type = type;
 		}
-
 	}
-
 }
+
 ```
 
 ---
@@ -263,11 +142,18 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
+
+import io.github.seccoding.excel.annotations.Align;
+import io.github.seccoding.excel.annotations.BackgroundColor;
+import io.github.seccoding.excel.annotations.Border;
 import io.github.seccoding.excel.annotations.ExcelSheet;
-import io.github.seccoding.excel.annotations.Field;
-import io.github.seccoding.excel.annotations.Format;
-import io.github.seccoding.excel.option.WriteOption;
-import io.github.seccoding.excel.write.ExcelWrite;
+import io.github.seccoding.excel.annotations.Text;
+import io.github.seccoding.excel.annotations.Title;
+import io.github.seccoding.excel.write.Write;
 
 /**
  * ExcelWriteTest Example
@@ -277,51 +163,45 @@ import io.github.seccoding.excel.write.ExcelWrite;
 public class ExcelWriteTest {
 
 	public static void main(String[] args) {
-
-		WriteOption<TestVO> wo = new WriteOption<TestVO>();
-//		wo.setSheetName("Test"); @ExcelSheet()로 교체
-		wo.setFileName("test.xlsx");
-		wo.setFilePath("C:\\Users\\mcjan\\Desktop");
-
-		List<String> titles = new ArrayList<String>();
-		titles.add("Title1");
-		titles.add("Title2");
-		titles.add("Title3");
-		titles.add("Title4");
-		titles.add("Title5");
-		wo.setTitles(titles);
-
 		List<TestVO> contents = new ArrayList<TestVO>();
 		contents.add(new TestVO(111111111, "ABC", true, "=1+1", "2019-02-21"));
 		contents.add(new TestVO(2222222, "DEF", true, "=2+2", "2019-02-21"));
 		contents.add(new TestVO(33333, "HIJ", true, "=3+3", "2019-02-21"));
-		wo.setContents(contents);
 
-		File excelFile = ExcelWrite.write(wo);
+		Write<TestVO> write = new Write<>(TestVO.class, contents);
+		write.write(new File("/Users/codemakers/Desktop", "Test.xlsx"));
 	}
 
-	@ExcelSheet("TestSheet")
+	@ExcelSheet(value = "TestSheet")
+	@Border(value = BorderStyle.MEDIUM, color = IndexedColors.RED)
 	public static class TestVO {
 
-		@Field("Title1")
-		@Format(alignment = Format.LEFT, verticalAlignment = Format.V_CENTER, bold = true, dataFormat = "#,###")
+		@Title(value="Title1")
+		@BackgroundColor(IndexedColors.BLACK)
+		@Text(color = IndexedColors.WHITE, bold = true) 
+		@Align(value=HorizontalAlignment.CENTER, verticalAlignment = VerticalAlignment.TOP)
 		private int id;
 
-		@Field("Title2")
-		@Format(alignment = Format.LEFT, verticalAlignment = Format.V_CENTER)
+		@Title(value="Title2")
+		@BackgroundColor(IndexedColors.WHITE)
+		@Text(color = IndexedColors.RED)
+		@Align(value=HorizontalAlignment.RIGHT, verticalAlignment = VerticalAlignment.CENTER)
 		private String content;
 
-		@Field("Title3")
-		@Format(alignment = Format.LEFT, verticalAlignment = Format.V_CENTER)
+		@Title(value="Title3")
+		@BackgroundColor(IndexedColors.RED)
+		@Text(color = IndexedColors.YELLOW)
+		@Align(value=HorizontalAlignment.LEFT, verticalAlignment = VerticalAlignment.BOTTOM)
 		private boolean isTrue;
 
-		@Field("Title4")
-		@Format(alignment = Format.CENTER, verticalAlignment = Format.V_CENTER)
+		@Title(value="Title4")
+		@BackgroundColor(IndexedColors.BLUE)
+		@Text(color = IndexedColors.BLUE_GREY)
 		private String formula;
 
-		@Field(value = "Title5", date = true)
-//		@Format(dataFormat = "yyyy-MM-dd") // 2019-02-21
-		@Format(dataFormat = "yyyy-MM-dd", toDataFormat="dd-MM-yyyy") // 21-02-2019
+		@Title(value="Title5")
+		@BackgroundColor(IndexedColors.YELLOW)
+		@Text(color = IndexedColors.BROWN, bold = true)
 		private String date;
 
 		public TestVO(int id, String content, boolean isTrue, String formula, String date) {
@@ -348,11 +228,11 @@ public class ExcelWriteTest {
 			this.content = content;
 		}
 
-		public boolean isTrue() {
+		public boolean getIsTrue() {
 			return isTrue;
 		}
 
-		public void setTrue(boolean isTrue) {
+		public void setIsTrue(boolean isTrue) {
 			this.isTrue = isTrue;
 		}
 
@@ -375,6 +255,7 @@ public class ExcelWriteTest {
 	}
 
 }
+
 ```
 
 <a href="#바로가기">상위로 가기</a>
