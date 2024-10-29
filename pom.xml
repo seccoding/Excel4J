@@ -16,24 +16,20 @@
 			<name>mcjang1116</name>
 			<email>mcjang1116@gmail.com</email>
 		</developer>
+		<developer>
+			<name>codemakers</name>
+			<email>codemakers.kr@gmail.com</email>
+		</developer>
 	</developers>
 
 	<scm>
 		<url>https://github.com/seccoding/Excel4J.git</url>
 	</scm>
 
-	<distributionManagement>
-		<repository>
-			<id>Excel4J</id>
-			<url>https://api.bintray.com/maven/mcjang1116/io.github.seccoding/Excel4J/;publish=1</url>
-		</repository>
-	</distributionManagement>
-
 	<properties>
+		<poi.version>4.1.1</poi.version>
 		<java.version>1.8</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<bintray.repo>mcjang1116/io.github.seccoding</bintray.repo>
-		<bintray.package>Excel4J</bintray.package>
 	</properties>
 
 	<licenses>
@@ -50,25 +46,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.5.1</version>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-gpg-plugin</artifactId>
-				<version>1.6</version>
-				<executions>
-					<execution>
-						<id>sign-artifacts</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>sign</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<attach>false</attach>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -77,22 +56,22 @@
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
-			<version>4.1.1</version>
+			<version>${poi.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
-			<version>4.1.1</version>
+			<version>${poi.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml-schemas</artifactId>
-			<version>4.1.1</version>
+			<version>${poi.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-scratchpad</artifactId>
-			<version>4.1.1</version>
+			<version>${poi.version}</version>
 		</dependency>
 
 	</dependencies>
