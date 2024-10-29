@@ -9,12 +9,24 @@ import org.apache.poi.openxml4j.util.ZipSecureFile;
 
 import io.github.seccoding.excel.write.abstracts.WriteBody;
 
+/**
+ * 엑셀 파일을 작성한다.
+ * @param <T> 엑셀 파일에 작성할 데이터가 들어있는 인스턴스의 원본 클래스
+ */
 public class Write<T> extends WriteBody<T> {
 
+	/**
+	 * @param dataClass 엑셀 파일에 작성할 데이터가 들어있는 인스턴스의 원본 클래스
+	 * @param contents 엑셀 파일에 작성할 리스트 인스턴스
+	 */
 	public Write(Class<T> dataClass, List<T> contents) {
 		super(dataClass, contents);
 	}
 	
+	/**
+	 * 엑셀파일을 생성하고 내용을 작성한다.
+	 * @param excelPath 생성할 엑셀 파일의 파일 인스턴스
+	 */
 	public void write(File excelPath) {
 		super.makeWorkbook(excelPath.getName());
 		super.makeSheet();
@@ -25,6 +37,10 @@ public class Write<T> extends WriteBody<T> {
 		this.writeFile(excelPath);
 	}
 	
+	/**
+	 * 엑셀 워트북을 파일 인스턴스로 변환 (디스크에 엑셀 파일을 작성한다)
+	 * @param excelPath
+	 */
 	private void writeFile(File excelPath) {
 		FileOutputStream fos = null;
 		

@@ -10,9 +10,19 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import io.github.seccoding.excel.annotations.Merge;
 import io.github.seccoding.excel.annotations.Title;
 
+/**
+ * 엑셀시트에 타이틀을 작성.
+ * @param <T>
+ */
 public abstract class WriteTitle<T> extends WriteWorkbook<T> {
 
+	/**
+	 * 엑셀 시트에 작성할 리스트 인스턴스
+	 */
 	protected List<T> contents;
+	/**
+	 * 다음에 작성할 행 번호
+	 */
 	protected int nextRowIndex;
 	
 	protected WriteTitle(Class<T> dataClass, List<T> contents) {
@@ -20,6 +30,9 @@ public abstract class WriteTitle<T> extends WriteWorkbook<T> {
 		this.contents = contents;
 	}
 
+	/**
+	 * 타이틀 병합 처리
+	 */
 	private void makeMergeTitleRow() {
 		Row row = super.sheet.createRow(super.writeStartRow);
 		int cellIndex = 0;
@@ -75,6 +88,9 @@ public abstract class WriteTitle<T> extends WriteWorkbook<T> {
 		this.nextRowIndex = this.sheet.getPhysicalNumberOfRows();
 	}
 	
+	/**
+	 * 타이틀 작성
+	 */
 	protected void makeMainTitleRow() {
 		makeMergeTitleRow();
 		
@@ -115,6 +131,11 @@ public abstract class WriteTitle<T> extends WriteWorkbook<T> {
 		this.nextRowIndex = this.sheet.getPhysicalNumberOfRows();
 	}
 	
+	/**
+	 * 셀 스타일 적용
+	 * @param cell
+	 * @param field
+	 */
 	protected void setCellStyle(Cell cell, Field field) {
 		if (super.borderStyle != null) {
 			cell.setCellStyle(super.borderStyle);

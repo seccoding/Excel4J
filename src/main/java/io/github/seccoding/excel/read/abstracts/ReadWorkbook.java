@@ -27,19 +27,43 @@ import io.github.seccoding.excel.annotations.ExcelSheet;
 import io.github.seccoding.excel.util.FileType;
 import io.github.seccoding.excel.util.InstanceUtil;
 
+/**
+ * 워크북 시트의 값들을 읽어 냄.
+ * @param <T>
+ */
 public abstract class ReadWorkbook<T> extends Readable<T> {
 
+	/**
+	 * 읽을 시트 명
+	 */
 	private String sheetName;
+	
+	/**
+	 * 읽어낼 시작 행 번호
+	 */
 	private int startRow;
+	
+	/**
+	 * 읽을 시트에 값이 존재하는 물리적인 row의 개수 
+	 */
 	private int physicalNumberOfRows;
+	
+	/**
+	 * 특정 행에 값이 존재하는 물리적인 컬럼의 개수
+	 */
 	private int physicalNumberOfCells;
 
 	protected ReadWorkbook(Class<T> resultClass) {
 		super(resultClass);
-		extractSheetName();
-		extractStartRow();
+		this.extractSheetName();
+		this.extractStartRow();
 	}
 
+	/**
+	 * 엑셀파일을 읽어 워크북으로 생성. 
+	 * @param workbookPath
+	 * @return
+	 */
 	protected Workbook loadWorkbook(Path workbookPath) {
 		FileInputStream fis = null;
 		try {
@@ -85,7 +109,7 @@ public abstract class ReadWorkbook<T> extends Readable<T> {
 		}
 
 		if (this.workbook != null) {
-			this.sheet = getSheet();
+			this.sheet = this.getSheet();
 			this.physicalNumberOfRows = this.sheet.getPhysicalNumberOfRows();
 			return this.workbook;
 		}
@@ -93,6 +117,9 @@ public abstract class ReadWorkbook<T> extends Readable<T> {
 		throw new RuntimeException(workbookPath.toString() + " isn't excel file format");
 	}
 
+	/**
+	 * @ExcelSheet 에서 읽을 Sheet명을 조회.
+	 */
 	private void extractSheetName() {
 		if (this.resultClass.isAnnotationPresent(ExcelSheet.class)) {
 			ExcelSheet excelSheetAnnotation = this.resultClass.getAnnotation(ExcelSheet.class);
@@ -100,6 +127,9 @@ public abstract class ReadWorkbook<T> extends Readable<T> {
 		}
 	}
 
+	/**
+	 * @ExcelSheet 에서 읽을 시작 행 번호를 조회.
+	 */
 	private void extractStartRow() {
 		if (this.resultClass.isAnnotationPresent(ExcelSheet.class)) {
 			ExcelSheet excelSheetAnnotation = this.resultClass.getAnnotation(ExcelSheet.class);
@@ -107,6 +137,11 @@ public abstract class ReadWorkbook<T> extends Readable<T> {
 		}
 	}
 
+	/**
+	 * 워크북에서 읽을 시트 추출.
+	 * 시트명이 없을 경우 첫 번째 시트를 추출한다.
+	 * @return
+	 */
 	private Sheet getSheet() {
 		if (this.sheetName == null || this.sheetName.length() == 0) {
 			return this.workbook.getSheetAt(0);
@@ -114,6 +149,10 @@ public abstract class ReadWorkbook<T> extends Readable<T> {
 		return this.workbook.getSheet(this.sheetName);
 	}
 
+	/**
+	 * "@Field가 적용된 멤버변수를 탐색"
+	 * @return Map<컬럼명, 멤버변수명>
+	 */
 	private Map<String, String> extractFieldAnnotation() {
 		Field[] fields = super.resultClass.getDeclaredFields();
 		Map<String, String> fieldNames = new HashMap<>();
@@ -128,9 +167,13 @@ public abstract class ReadWorkbook<T> extends Readable<T> {
 		return fieldNames;
 	}
 
+	/**
+	 * 엑셀 워크북의 시트를 읽어 리스트로 변환.
+	 * @return 시트의 내용.
+	 */
 	protected List<T> setValueInExcel() {
 		List<T> list = new ArrayList<>();
-		Map<String, String> fieldAnnotations = extractFieldAnnotation();
+		Map<String, String> fieldAnnotations = this.extractFieldAnnotation();
 
 		for (int i = this.startRow; i < this.physicalNumberOfRows; i++) {
 			Row row = super.sheet.getRow(i);
@@ -159,7 +202,7 @@ public abstract class ReadWorkbook<T> extends Readable<T> {
 						arg = sdf.format(arg);
 					}
 					
-					arg = convertCellValueToFieldType(arg, field.getType());
+					arg = this.convertCellValueToFieldType(arg, field.getType());
 
 					InstanceUtil.invokeMethod(newInstance, setter, arg);
 				}
@@ -169,6 +212,11 @@ public abstract class ReadWorkbook<T> extends Readable<T> {
 		return list;
 	}
 
+	/**
+	 * 컬럼의 타입 별로 값을 추출.
+	 * @param cell 추출하려는 셀.
+	 * @return
+	 */
 	private Object getCellValue(Cell cell) {
 		if (cell.getCellType() == CellType.FORMULA) {
 			return cell.getCellFormula();

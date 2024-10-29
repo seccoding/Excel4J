@@ -21,19 +21,50 @@ import io.github.seccoding.excel.annotations.Text;
 import io.github.seccoding.excel.annotations.Title;
 import io.github.seccoding.excel.util.FileType;
 
+/**
+ * 작성할 엑셀 파일의 워크북 생성
+ * @param <T>
+ */
 public abstract class WriteWorkbook<T> extends Writable<T> {
 
+	/**
+	 * 데이터를 작성할 워크북
+	 */
 	protected Workbook workbook;
+	
+	/**
+	 * 데이터를 작성할 워크북의 시트
+	 */
 	protected Sheet sheet;
+	
+	/**
+	 * 적용할 경계선 스타일
+	 */
 	protected CellStyle borderStyle;
+	
+	/**
+	 * 셀 별로 적용할 배경색 스타일
+	 */
 	protected Map<String, CellStyle> backgroundStyle;
+	
+	/**
+	 * 셀 별로 적용할 폰트 스타일
+	 */
 	protected Map<String, CellStyle> textStyle;
+	
+	/**
+	 * 셀 별로 적용할 정렬 스타일
+	 */
 	protected Map<String, CellStyle> alignStyle;
 
 	protected WriteWorkbook(Class<T> dataClass) {
 		super(dataClass);
 	}
 
+	/**
+	 * 워크북 생성
+	 * @param fileName 파일 명
+	 */
 	protected void makeWorkbook(String fileName) {
 		if (FileType.isXls(fileName)) {
 			this.workbook = new HSSFWorkbook();
@@ -44,6 +75,9 @@ public abstract class WriteWorkbook<T> extends Writable<T> {
 		}
 	}
 
+	/**
+	 * 워크 시트 생성
+	 */
 	protected void makeSheet() {
 		this.sheet = this.workbook.createSheet(super.sheetName);
 		this.makeBorder();
@@ -52,6 +86,9 @@ public abstract class WriteWorkbook<T> extends Writable<T> {
 		this.makeAlign();
 	}
 
+	/**
+	 * 데이터를 모두 작성한 이후 셀의 내용을 기준으로 셀 너비를 조정.
+	 */
 	protected void autoColumnSize() {
 		if (this.sheet instanceof SXSSFSheet) {
 			((SXSSFSheet) this.sheet).trackAllColumnsForAutoSizing();
@@ -64,6 +101,9 @@ public abstract class WriteWorkbook<T> extends Writable<T> {
 		}
 	}
 
+	/**
+	 * 경계선 스타일 생성
+	 */
 	private void makeBorder() {
 		if (super.dataClass.isAnnotationPresent(Border.class)) {
 			Border border = super.dataClass.getAnnotation(Border.class);
@@ -88,6 +128,9 @@ public abstract class WriteWorkbook<T> extends Writable<T> {
 		}
 	}
 
+	/**
+	 * 배경색 스타일 생성
+	 */
 	protected void makeBackgroundColor() {
 		this.backgroundStyle = new HashMap<>();
 		
@@ -109,6 +152,9 @@ public abstract class WriteWorkbook<T> extends Writable<T> {
 		}
 	}
 	
+	/**
+	 * 폰트 스타일 생성
+	 */
 	protected void makeTextColor() {
 		this.textStyle = new HashMap<>();
 		
@@ -138,6 +184,9 @@ public abstract class WriteWorkbook<T> extends Writable<T> {
 		}
 	}
 	
+	/**
+	 * 정렬 스타일 생성
+	 */
 	protected void makeAlign() {
 		this.alignStyle = new HashMap<>();
 		

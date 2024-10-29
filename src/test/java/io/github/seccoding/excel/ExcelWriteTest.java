@@ -34,35 +34,55 @@ public class ExcelWriteTest {
 		write.write(new File("/Users/codemakers/Desktop", "Test.xlsx"));
 	}
 
-	@ExcelSheet(value = "TestSheet")
+	// 엑셀 파일의 "TestSheet" 시트에 내용을 작성한다.
+	@ExcelSheet(value = "TestSheet") 
+	// 엑셀 시트의 데이터가 존재하는 모든 셀들의 경계선을 지정한다.
 	@Border(value = BorderStyle.MEDIUM, color = IndexedColors.RED)
 	public static class TestVO {
 
+		// 첫 번째 컬럼의 타이틀(헤더)을 "Title1" 로 작성한다.
 		@Title(value="Title1")
+		// 해당 컬럼의 배경색을 검은색으로 지정한다.
 		@BackgroundColor(IndexedColors.BLACK)
-		@Text(color = IndexedColors.WHITE, bold = true) 
+		// 해당 컬럼의 글자를 굵은 흰색으로 지정한다.
+		@Text(color = IndexedColors.WHITE, bold = true)
+		// 해당 컬럼은 가로(중앙), 세로(위)로 정렬한다.
 		@Align(value=HorizontalAlignment.CENTER, verticalAlignment = VerticalAlignment.TOP)
 		private int id;
 
+		// 첫 번째 컬럼의 타이틀(헤더)을 "Title2" 로 작성한다.
 		@Title(value="Title2")
+		// 해당 컬럼의 배경색을 하양색으로 지정한다.
 		@BackgroundColor(IndexedColors.WHITE)
+		// 해당 컬럼의 글자를 붉은색으로 지정한다.
 		@Text(color = IndexedColors.RED)
+		// 해당 컬럼은 가로(오른쪽), 세로(중앙)로 정렬한다.
 		@Align(value=HorizontalAlignment.RIGHT, verticalAlignment = VerticalAlignment.CENTER)
 		private String content;
 
+		// 첫 번째 컬럼의 타이틀(헤더)을 "Title3" 로 작성한다.
 		@Title(value="Title3")
+		// 해당 컬럼의 배경색을 붉은색으로 지정한다.
 		@BackgroundColor(IndexedColors.RED)
+		// 해당 컬럼의 글자를 노랑색으로 지정한다.
 		@Text(color = IndexedColors.YELLOW)
+		// 해당 컬럼은 가로(왼쪽), 세로(아래)로 정렬한다.
 		@Align(value=HorizontalAlignment.LEFT, verticalAlignment = VerticalAlignment.BOTTOM)
 		private boolean isTrue;
 
+		// 첫 번째 컬럼의 타이틀(헤더)을 "Title4" 로 작성한다.
 		@Title(value="Title4")
+		// 해당 컬럼의 배경색을 푸른색으로 지정한다.
 		@BackgroundColor(IndexedColors.BLUE)
+		// 해당 컬럼의 글자를 BlueGrey색으로 지정한다.
 		@Text(color = IndexedColors.BLUE_GREY)
 		private String formula;
 
+		// 첫 번째 컬럼의 타이틀(헤더)을 "Title5" 로 작성한다.
 		@Title(value="Title5")
+		// 해당 컬럼의 배경색을 노랑색으로 지정한다.
 		@BackgroundColor(IndexedColors.YELLOW)
+		// 해당 컬럼의 글자를 굵은 갈색으로 지정한다.
 		@Text(color = IndexedColors.BROWN, bold = true)
 		private String date;
 

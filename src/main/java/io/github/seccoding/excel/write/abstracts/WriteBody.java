@@ -10,12 +10,19 @@ import org.apache.poi.ss.usermodel.Row;
 import io.github.seccoding.excel.annotations.Title;
 import io.github.seccoding.excel.util.InstanceUtil;
 
+/**
+ * 워크시트에 내용을 작성한다.
+ * @param <T>
+ */
 public abstract class WriteBody<T> extends WriteTitle<T> {
 
 	protected WriteBody(Class<T> dataClass, List<T> contents) {
 		super(dataClass, contents);
 	}
 
+	/**
+	 * 워크시트에 내용을 작성한다.
+	 */
 	protected void makeContentRow() {
 		for (T t : contents) {
 			Row row = super.sheet.createRow(this.nextRowIndex);

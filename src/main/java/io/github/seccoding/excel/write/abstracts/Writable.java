@@ -2,10 +2,23 @@ package io.github.seccoding.excel.write.abstracts;
 
 import io.github.seccoding.excel.annotations.ExcelSheet;
 
+/**
+ * 엑셀 파일을 씀.
+ * @param <T> 데이터가 들어있는 인스턴스의 원본 클래스
+ */
 public abstract class Writable<T> {
 
+	/**
+	 * 데이터가 들어있는 인스턴스의 원본 클래스
+	 */
 	protected Class<T> dataClass;
+	/**
+	 * 워크시트에 작성할 시트 명
+	 */
 	protected String sheetName;
+	/**
+	 * 데이터를 쓸 시작 행번호
+	 */
 	protected int writeStartRow;
 	
 	protected Writable(Class<T> dataClass) {
@@ -13,6 +26,9 @@ public abstract class Writable<T> {
 		this.extractSheetName();
 	}
 	
+	/**
+	 * 시트 명을 @ExcelSheet에서 추출
+	 */
 	protected void extractSheetName() {
 		if (this.dataClass.isAnnotationPresent(ExcelSheet.class)) {
 			ExcelSheet es = this.dataClass.getAnnotation(ExcelSheet.class);
