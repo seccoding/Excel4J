@@ -11,6 +11,16 @@ xls 와 xlsx를 모두 지원함.
 
 ## Release Note 
 <a href="#바로가기">상위로 가기</a>
+
+### 3.0.2 (2024.11.06) 
+<a href="#바로가기">상위로 가기</a>
+> - io.github.seccoding.excel.write.Write.appendNewSheet(String sheetName, List<T> data): void
+> - io.github.seccoding.excel.write.Write.appendNewSheet(Class<?> dataClass, List<? extends Object> data): void
+> - io.github.seccoding.excel.write.Write.appendNewSheet(String sheetName, Class<?> dataClass, List<? extends Object> data): void
+> - io.github.seccoding.excel.write.Write.appendNewSheet(int writeStartRow, Class<?> dataClass, List<? extends Object> data): void
+> - io.github.seccoding.excel.write.Write.appendNewSheet(String sheetName, int writeStartRow, Class<?> dataClass, List<? extends Object> data): void
+> - 추가
+
 ### 3.0.1 (2024.11.06) 
 <a href="#바로가기">상위로 가기</a>
 > - io.github.seccoding.excel.read.Read.read(String sheetName, int startRow): List<T>
