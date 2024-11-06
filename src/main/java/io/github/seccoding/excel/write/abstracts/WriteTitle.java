@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 import io.github.seccoding.excel.annotations.Merge;
@@ -33,13 +34,18 @@ public abstract class WriteTitle<T> extends WriteWorkbook<T> {
 	/**
 	 * 타이틀 병합 처리
 	 */
-	private void makeMergeTitleRow() {
-		Row row = super.sheet.createRow(super.writeStartRow);
+	private void makeMergeTitleRow(Sheet sheet, Class<?> dataClass) {
+		
+		for (int i = 0; i < super.writeStartRow; i++) {
+			sheet.createRow(i);
+		}
+		
+		Row row = sheet.createRow(super.writeStartRow);
 		int cellIndex = 0;
 		
 		boolean needRemoveNewRow = true; 
 		
-		Field[] fields = super.dataClass.getDeclaredFields();
+		Field[] fields = dataClass.getDeclaredFields();
 		int appendedRows = 0;
 		for (Field field : fields) {
 			if (field.isAnnotationPresent(Title.class)) {
@@ -67,7 +73,7 @@ public abstract class WriteTitle<T> extends WriteWorkbook<T> {
 					if (merge.cols() - 1 >= 0) {
 						endColIndex += merge.cols() - 1;
 					}
-					super.sheet.addMergedRegion(new CellRangeAddress( row.getRowNum(), endRowIndex, cellIndex, endColIndex ));
+					sheet.addMergedRegion(new CellRangeAddress( row.getRowNum(), endRowIndex, cellIndex, endColIndex ));
 					
 					setCellStyle(cell, field);
 					
@@ -78,26 +84,29 @@ public abstract class WriteTitle<T> extends WriteWorkbook<T> {
 		
 		if (!needRemoveNewRow) {
 			for (int i = 0; i < appendedRows; i++) {
-				super.sheet.createRow(this.sheet.getPhysicalNumberOfRows());
+				sheet.createRow(sheet.getPhysicalNumberOfRows());
 			}			
 		}
 		else {
-			super.sheet.removeRow(row);
+			sheet.removeRow(row);
 		}
 		
-		this.nextRowIndex = this.sheet.getPhysicalNumberOfRows();
+		this.nextRowIndex = sheet.getPhysicalNumberOfRows();
 	}
 	
 	/**
 	 * 타이틀 작성
 	 */
-	protected void makeMainTitleRow() {
-		makeMergeTitleRow();
+	protected void makeMainTitleRow( Sheet sheet, Class<?> dataClass, int startRow ) {
+		super.writeStartRow = startRow;
+		this.nextRowIndex = 0;
 		
-		Row row = super.sheet.createRow(this.nextRowIndex);
+		makeMergeTitleRow(sheet, dataClass == null ? super.dataClass : dataClass);
+		
+		Row row = sheet.createRow(this.nextRowIndex);
 		int cellIndex = 0;
 		
-		Field[] fields = super.dataClass.getDeclaredFields();
+		Field[] fields = dataClass.getDeclaredFields();
 		
 		boolean needRemoveNewRow = true;
 		for (Field field : fields) {
@@ -110,7 +119,7 @@ public abstract class WriteTitle<T> extends WriteWorkbook<T> {
 				
 				Cell cell = null;
 				if (title.appendPrevRow()) {
-					cell = super.sheet.getRow(row.getRowNum() - 1).createCell(cellIndex);
+					cell = sheet.getRow(row.getRowNum() - 1).createCell(cellIndex);
 				}
 				else {
 					cell = row.createCell(cellIndex);
@@ -125,10 +134,10 @@ public abstract class WriteTitle<T> extends WriteWorkbook<T> {
 		}
 		
 		if (needRemoveNewRow) {
-			this.sheet.removeRow(row);
+			sheet.removeRow(row);
 		}
 		
-		this.nextRowIndex = this.sheet.getPhysicalNumberOfRows();
+		this.nextRowIndex = sheet.getPhysicalNumberOfRows();
 	}
 	
 	/**

@@ -33,11 +33,6 @@ public abstract class WriteWorkbook<T> extends Writable<T> {
 	protected Workbook workbook;
 	
 	/**
-	 * 데이터를 작성할 워크북의 시트
-	 */
-	protected Sheet sheet;
-	
-	/**
 	 * 적용할 경계선 스타일
 	 */
 	protected CellStyle borderStyle;
@@ -78,52 +73,62 @@ public abstract class WriteWorkbook<T> extends Writable<T> {
 	/**
 	 * 워크 시트 생성
 	 */
-	protected void makeSheet() {
-		this.sheet = this.workbook.createSheet(super.sheetName);
-		this.makeBorder();
-		this.makeBackgroundColor();
-		this.makeTextColor();
-		this.makeAlign();
+	protected Sheet makeSheet() {
+		return this.makeSheet(super.sheetName, super.dataClass);
+	}
+	
+	/**
+	 * 워크 시트 생성
+	 */
+	protected Sheet makeSheet(String sheetName, Class<?> dataClass) {
+		Sheet sheet = this.workbook.createSheet(sheetName);
+		this.borderStyle = null;
+		this.makeBorder(dataClass);
+		this.makeBackgroundColor(dataClass);
+		this.makeTextColor(dataClass);
+		this.makeAlign(dataClass);
+		
+		return sheet;
 	}
 
 	/**
 	 * 데이터를 모두 작성한 이후 셀의 내용을 기준으로 셀 너비를 조정.
 	 */
-	protected void autoColumnSize() {
-		if (this.sheet instanceof SXSSFSheet) {
-			((SXSSFSheet) this.sheet).trackAllColumnsForAutoSizing();
+	protected void autoColumnSize(Sheet sheet) {
+		if (sheet instanceof SXSSFSheet) {
+			((SXSSFSheet) sheet).trackAllColumnsForAutoSizing();
 		}
 
-		Row row = this.sheet.getRow(this.sheet.getFirstRowNum());
+		Row row = sheet.getRow(sheet.getFirstRowNum());
 
 		for (int j = 0; j < row.getPhysicalNumberOfCells(); j++) {
-			this.sheet.autoSizeColumn(j);
+			sheet.autoSizeColumn(j);
 		}
 	}
 
 	/**
 	 * 경계선 스타일 생성
 	 */
-	private void makeBorder() {
-		if (super.dataClass.isAnnotationPresent(Border.class)) {
-			Border border = super.dataClass.getAnnotation(Border.class);
+	private void makeBorder(Class<?> dataClass) {
+		if (dataClass.isAnnotationPresent(Border.class)) {
+			Border border = dataClass.getAnnotation(Border.class);
 			this.borderStyle = this.workbook.createCellStyle();
 
 			if (border.top()) {
-				borderStyle.setBorderTop(border.value());
-				borderStyle.setTopBorderColor(border.color().index);
+				this.borderStyle.setBorderTop(border.value());
+				this.borderStyle.setTopBorderColor(border.color().index);
 			}
 			if (border.right()) {
-				borderStyle.setBorderRight(border.value());
-				borderStyle.setRightBorderColor(border.color().index);
+				this.borderStyle.setBorderRight(border.value());
+				this.borderStyle.setRightBorderColor(border.color().index);
 			}
 			if (border.bottom()) {
-				borderStyle.setBorderBottom(border.value());
-				borderStyle.setBottomBorderColor(border.color().index);
+				this.borderStyle.setBorderBottom(border.value());
+				this.borderStyle.setBottomBorderColor(border.color().index);
 			}
 			if (border.left()) {
-				borderStyle.setBorderLeft(border.value());
-				borderStyle.setLeftBorderColor(border.color().index);
+				this.borderStyle.setBorderLeft(border.value());
+				this.borderStyle.setLeftBorderColor(border.color().index);
 			}
 		}
 	}
@@ -131,10 +136,10 @@ public abstract class WriteWorkbook<T> extends Writable<T> {
 	/**
 	 * 배경색 스타일 생성
 	 */
-	protected void makeBackgroundColor() {
+	protected void makeBackgroundColor(Class<?> dataClass) {
 		this.backgroundStyle = new HashMap<>();
 		
-		Field[] fields = super.dataClass.getDeclaredFields();
+		Field[] fields = dataClass.getDeclaredFields();
 		for (Field field : fields) {
 
 			if (field.isAnnotationPresent(Title.class) 
@@ -155,10 +160,10 @@ public abstract class WriteWorkbook<T> extends Writable<T> {
 	/**
 	 * 폰트 스타일 생성
 	 */
-	protected void makeTextColor() {
+	protected void makeTextColor(Class<?> dataClass) {
 		this.textStyle = new HashMap<>();
 		
-		Field[] fields = super.dataClass.getDeclaredFields();
+		Field[] fields = dataClass.getDeclaredFields();
 		for (Field field : fields) {
 			
 			if (field.isAnnotationPresent(Title.class) 
@@ -187,10 +192,10 @@ public abstract class WriteWorkbook<T> extends Writable<T> {
 	/**
 	 * 정렬 스타일 생성
 	 */
-	protected void makeAlign() {
+	protected void makeAlign(Class<?> dataClass) {
 		this.alignStyle = new HashMap<>();
 		
-		Field[] fields = super.dataClass.getDeclaredFields();
+		Field[] fields = dataClass.getDeclaredFields();
 		for (Field field : fields) {
 			
 			if (field.isAnnotationPresent(Title.class) 

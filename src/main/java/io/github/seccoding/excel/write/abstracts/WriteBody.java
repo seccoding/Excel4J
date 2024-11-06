@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 
 import io.github.seccoding.excel.annotations.Title;
 import io.github.seccoding.excel.util.InstanceUtil;
@@ -23,9 +24,9 @@ public abstract class WriteBody<T> extends WriteTitle<T> {
 	/**
 	 * 워크시트에 내용을 작성한다.
 	 */
-	protected void makeContentRow() {
-		for (T t : contents) {
-			Row row = super.sheet.createRow(this.nextRowIndex);
+	protected void makeContentRow(Sheet sheet, List<? extends Object> data) {
+		for (Object t : (data == null ? super.contents: data)) {
+			Row row = sheet.createRow(this.nextRowIndex);
 			int cellIndex = 0;
 			
 			Field[] fields = t.getClass().getDeclaredFields();

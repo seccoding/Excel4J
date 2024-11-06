@@ -23,15 +23,15 @@ public abstract class Writable<T> {
 	
 	protected Writable(Class<T> dataClass) {
 		this.dataClass = dataClass;
-		this.extractSheetName();
+		this.extractSheetName(dataClass);
 	}
 	
 	/**
 	 * 시트 명을 @ExcelSheet에서 추출
 	 */
-	protected void extractSheetName() {
-		if (this.dataClass.isAnnotationPresent(ExcelSheet.class)) {
-			ExcelSheet es = this.dataClass.getAnnotation(ExcelSheet.class);
+	protected String extractSheetName(Class<?> dataClass) {
+		if (dataClass.isAnnotationPresent(ExcelSheet.class)) {
+			ExcelSheet es = dataClass.getAnnotation(ExcelSheet.class);
 			this.sheetName = es.value() == null || es.value().length() == 0 ? "Sheet1" : es.value();
 			this.writeStartRow = es.startRow() - 1;
 		}
@@ -41,6 +41,8 @@ public abstract class Writable<T> {
 		}
 		
 		if (this.writeStartRow < 0) this.writeStartRow = 0;
+		
+		return this.sheetName;
 	}
 	
 }
