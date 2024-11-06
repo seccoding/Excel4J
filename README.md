@@ -90,6 +90,7 @@ xls 와 xlsx를 모두 지원함.
 ```java
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 import io.github.seccoding.excel.annotations.ExcelSheet;
 import io.github.seccoding.excel.annotations.Field;
@@ -101,25 +102,48 @@ public class ExcelReadTest {
 		File file = new File("/Users/codemakers/Desktop", "Test.xlsx");
 		
 		Read<TestClass> read = new Read<>(file.toPath(), TestClass.class);
-		List<TestClass> result = read.read();
-		
-		result.forEach(tc -> {
+		List<TestClass> result1 = read.read();
+		result1.forEach(tc -> {
 			System.out.println(tc.getColumnName());
 			System.out.println(tc.getNo());
 			System.out.println(tc.getType());
 		});
 		
+		List<TestClass> result2 = read.read("testsheet", 3);
+		result2.forEach(tc -> {
+			System.out.println(tc.getColumnName());
+			System.out.println(tc.getNo());
+			System.out.println(tc.getType());
+		});
+		
+		
+		Map<String, List<TestClass>> resultMap = read.readToMap();
+		resultMap.entrySet().forEach(tc -> {
+			System.out.println(tc.getKey());
+			System.out.println(tc.getValue());
+		});
+		
+		Map<String, List<TestClass>> resultMap2 = read.readToMap(Map.of("testsheet", 1));
+		resultMap2.entrySet().forEach(tc -> {
+			System.out.println(tc.getKey());
+			System.out.println(tc.getValue());
+		});
 	}
 
+	// 엑셀파일의 첫번째 시트에서 두 번째 row부터 읽는다.
 	@ExcelSheet(startRow=1)
 	public static class TestClass {
 
+		// 엑셀 시트에서 B컬럼 내용만 읽는다.
 		@Field("B")
 		private String no;
 
+		// 엑셀 시트에서 C컬럼 내용만 읽는다.
 		@Field("C")
 		private String columnName;
 
+		// 엑셀 시트에서 E컬럼 내용만 읽는다.
+		// E컬럼의 타입이 날짜 타입이므로 isDate 적용.
 		@Field(value="E", isDate = true)
 		private String type;
 
@@ -146,9 +170,10 @@ public class ExcelReadTest {
 		public void setType(String type) {
 			this.type = type;
 		}
-	}
-}
 
+	}
+
+}
 ```
 
 ---
@@ -180,44 +205,72 @@ import io.github.seccoding.excel.write.Write;
 public class ExcelWriteTest {
 
 	public static void main(String[] args) {
-		List<TestVO> contents = new ArrayList<TestVO>();
+		List<TestVO> contents = new ArrayList<>();
 		contents.add(new TestVO(111111111, "ABC", true, "=1+1", "2019-02-21"));
 		contents.add(new TestVO(2222222, "DEF", true, "=2+2", "2019-02-21"));
 		contents.add(new TestVO(33333, "HIJ", true, "=3+3", "2019-02-21"));
-
+		
 		Write<TestVO> write = new Write<>(TestVO.class, contents);
-		write.write(new File("/Users/codemakers/Desktop", "Test.xlsx"));
+		write.write("Test.xlsx");
+
+		
+		List<TestVO2> contents2 = new ArrayList<>();
+		contents2.add(new TestVO2(5555, "ㅁㅁㅁABC", true));
+		contents2.add(new TestVO2(6666, "ㅇㅇㅇDEF", true));
+		contents2.add(new TestVO2(7777, "ㅗㅗㅗHIJ", true));
+		
+		write.appendNewSheet(TestVO2.class, contents2);
+		write.toFile(new File("/Users/codemakers/Desktop", "Test.xlsx"));
 	}
 
+	// 엑셀 파일의 "TestSheet" 시트에 내용을 작성한다.
 	@ExcelSheet(value = "TestSheet")
 	@Border(value = BorderStyle.MEDIUM, color = IndexedColors.RED)
 	public static class TestVO {
 
-		@Title(value="Title1")
+		// 첫 번째 컬럼의 타이틀(헤더)을 "Title1" 로 작성한다.
+		@Title(value = "Title1")
+		// 해당 컬럼의 배경색을 검은색으로 지정한다.
 		@BackgroundColor(IndexedColors.BLACK)
-		@Text(color = IndexedColors.WHITE, bold = true) 
-		@Align(value=HorizontalAlignment.CENTER, verticalAlignment = VerticalAlignment.TOP)
+		// 해당 컬럼의 글자를 굵은 흰색으로 지정한다.
+		@Text(color = IndexedColors.WHITE, bold = true)
+		// 해당 컬럼은 가로(중앙), 세로(위)로 정렬한다.
+		@Align(value = HorizontalAlignment.CENTER, verticalAlignment = VerticalAlignment.TOP)
 		private int id;
 
-		@Title(value="Title2")
+		// 첫 번째 컬럼의 타이틀(헤더)을 "Title2" 로 작성한다.
+		@Title(value = "Title2")
+		// 해당 컬럼의 배경색을 하양색으로 지정한다.
 		@BackgroundColor(IndexedColors.WHITE)
+		// 해당 컬럼의 글자를 붉은색으로 지정한다.
 		@Text(color = IndexedColors.RED)
-		@Align(value=HorizontalAlignment.RIGHT, verticalAlignment = VerticalAlignment.CENTER)
+		// 해당 컬럼은 가로(오른쪽), 세로(중앙)로 정렬한다.
+		@Align(value = HorizontalAlignment.RIGHT, verticalAlignment = VerticalAlignment.CENTER)
 		private String content;
 
-		@Title(value="Title3")
+		// 첫 번째 컬럼의 타이틀(헤더)을 "Title3" 로 작성한다.
+		@Title(value = "Title3")
+		// 해당 컬럼의 배경색을 붉은색으로 지정한다.
 		@BackgroundColor(IndexedColors.RED)
+		// 해당 컬럼의 글자를 노랑색으로 지정한다.
 		@Text(color = IndexedColors.YELLOW)
-		@Align(value=HorizontalAlignment.LEFT, verticalAlignment = VerticalAlignment.BOTTOM)
+		// 해당 컬럼은 가로(왼쪽), 세로(아래)로 정렬한다.
+		@Align(value = HorizontalAlignment.LEFT, verticalAlignment = VerticalAlignment.BOTTOM)
 		private boolean isTrue;
 
-		@Title(value="Title4")
+		// 첫 번째 컬럼의 타이틀(헤더)을 "Title4" 로 작성한다.
+		@Title(value = "Title4")
+		// 해당 컬럼의 배경색을 푸른색으로 지정한다.
 		@BackgroundColor(IndexedColors.BLUE)
+		// 해당 컬럼의 글자를 BlueGrey색으로 지정한다.
 		@Text(color = IndexedColors.BLUE_GREY)
 		private String formula;
 
-		@Title(value="Title5")
+		// 첫 번째 컬럼의 타이틀(헤더)을 "Title5" 로 작성한다.
+		@Title(value = "Title5")
+		// 해당 컬럼의 배경색을 노랑색으로 지정한다.
 		@BackgroundColor(IndexedColors.YELLOW)
+		// 해당 컬럼의 글자를 굵은 갈색으로 지정한다.
 		@Text(color = IndexedColors.BROWN, bold = true)
 		private String date;
 
@@ -267,6 +320,50 @@ public class ExcelWriteTest {
 
 		public void setDate(String date) {
 			this.date = date;
+		}
+
+	}
+
+	@ExcelSheet(value = "TestSheet2222")
+	public static class TestVO2 {
+
+		@Title(value = "_Title1_")
+		private int id;
+
+		@Title(value = "_Title2_")
+		private String content;
+
+		@Title(value = "_Title3_")
+		private boolean isTrue;
+
+		public TestVO2(int id, String content, boolean isTrue) {
+			this.id = id;
+			this.content = content;
+			this.isTrue = isTrue;
+		}
+
+		public int getId() {
+			return id;
+		}
+
+		public void setId(int id) {
+			this.id = id;
+		}
+
+		public String getContent() {
+			return content;
+		}
+
+		public void setContent(String content) {
+			this.content = content;
+		}
+
+		public boolean getIsTrue() {
+			return isTrue;
+		}
+
+		public void setIsTrue(boolean isTrue) {
+			this.isTrue = isTrue;
 		}
 
 	}
