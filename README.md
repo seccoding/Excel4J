@@ -11,6 +11,13 @@ xls 와 xlsx를 모두 지원함.
 
 ## Release Note 
 <a href="#바로가기">상위로 가기</a>
+### 3.0.1 (2024.11.06) 
+<a href="#바로가기">상위로 가기</a>
+> io.github.seccoding.excel.read.Read.read(String sheetName, int startRow): List<T>
+> io.github.seccoding.excel.read.Read.readToMap(): Map<String, List<T>>
+> io.github.seccoding.excel.read.Read.readToMap(Map<String, Integer> sheetsMap): Map<String, List<T>>
+> 추가
+ 
 ### 3.0.0 (2024.10.28) 
 <a href="#바로가기">상위로 가기</a>
 > 전체 구조 변경
