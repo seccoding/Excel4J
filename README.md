@@ -66,15 +66,15 @@ xls 와 xlsx를 모두 지원함.
 
 ## 사용 방법
 <a href="#바로가기">상위로 가기</a>
-### maven dependency에 Excel4J-3.0.0.jar 파일을 추가할 경우 
+### maven dependency에 Excel4J-3.0.2.jar 파일을 추가할 경우 
 <a href="#바로가기">상위로 가기</a>
-1. Excel4J-3.0.0.jar파일을 C:\에 복사합니다.
-1. Maven 명령어를 이용해 .m2 Repository 에 Excel4J-3.0.0.jar 를 설치(저장)합니다.<pre>mvn install:install-file -Dfile=C:\Excel4J-3.0.0.jar -DgroupId=io.github.seccoding -DartifactId=Excel4J -Dversion=3.0.0 -Dpackaging=jar</pre>
+1. Excel4J-3.0.2.jar파일을 C:\에 복사합니다.
+1. Maven 명령어를 이용해 .m2 Repository 에 Excel4J-3.0.2.jar 를 설치(저장)합니다.<pre>mvn install:install-file -Dfile=C:\Excel4J-3.0.2.jar -DgroupId=io.github.seccoding -DartifactId=Excel4J -Dversion=3.0.2 -Dpackaging=jar</pre>
 1. 본인의 Project/pom.xml 에 dependency를 추가합니다.<pre>
 	&lt;dependency&gt;
 	&nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;io.github.seccoding&lt;/groupId&gt;
 	&nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;Excel4J&lt;/artifactId&gt;
-	&nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;3.0.0&lt;/version&gt;
+	&nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;3.0.2&lt;/version&gt;
 	&lt;/dependency&gt;
 </pre>
 
