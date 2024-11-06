@@ -2,6 +2,7 @@ package io.github.seccoding.excel;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 import io.github.seccoding.excel.annotations.ExcelSheet;
 import io.github.seccoding.excel.annotations.Field;
@@ -13,14 +14,32 @@ public class ExcelReadTest {
 		File file = new File("/Users/codemakers/Desktop", "Test.xlsx");
 		
 		Read<TestClass> read = new Read<>(file.toPath(), TestClass.class);
-		List<TestClass> result = read.read();
-		
-		result.forEach(tc -> {
+		List<TestClass> result1 = read.read();
+		result1.forEach(tc -> {
 			System.out.println(tc.getColumnName());
 			System.out.println(tc.getNo());
 			System.out.println(tc.getType());
 		});
 		
+		List<TestClass> result2 = read.read("testsheet", 3);
+		result2.forEach(tc -> {
+			System.out.println(tc.getColumnName());
+			System.out.println(tc.getNo());
+			System.out.println(tc.getType());
+		});
+		
+		
+		Map<String, List<TestClass>> resultMap = read.readToMap();
+		resultMap.entrySet().forEach(tc -> {
+			System.out.println(tc.getKey());
+			System.out.println(tc.getValue());
+		});
+		
+		Map<String, List<TestClass>> resultMap2 = read.readToMap(Map.of("testsheet", 1));
+		resultMap2.entrySet().forEach(tc -> {
+			System.out.println(tc.getKey());
+			System.out.println(tc.getValue());
+		});
 	}
 
 	// 엑셀파일의 첫번째 시트에서 두 번째 row부터 읽는다.

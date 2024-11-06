@@ -43,16 +43,6 @@ public abstract class ReadWorkbook<T> extends Readable<T> {
 	 */
 	private int startRow;
 	
-	/**
-	 * 읽을 시트에 값이 존재하는 물리적인 row의 개수 
-	 */
-	private int physicalNumberOfRows;
-	
-	/**
-	 * 특정 행에 값이 존재하는 물리적인 컬럼의 개수
-	 */
-	private int physicalNumberOfCells;
-
 	protected ReadWorkbook(Class<T> resultClass) {
 		super(resultClass);
 		this.extractSheetName();
@@ -109,14 +99,21 @@ public abstract class ReadWorkbook<T> extends Readable<T> {
 		}
 
 		if (this.workbook != null) {
-			this.sheet = this.getSheet();
-			this.physicalNumberOfRows = this.sheet.getPhysicalNumberOfRows();
+			super.sheet = this.getSheet();
+			this.sheetName = super.sheet.getSheetName();
+			
+			super.sheetList = new ArrayList<>();
+			int sheetCount = super.workbook.getNumberOfSheets();
+			for (int i = 0; i < sheetCount; i++) {
+				super.sheetList.add(super.workbook.getSheetAt(i));
+			}
+			
 			return this.workbook;
 		}
 
 		throw new RuntimeException(workbookPath.toString() + " isn't excel file format");
 	}
-
+	
 	/**
 	 * @ExcelSheet 에서 읽을 Sheet명을 조회.
 	 */
@@ -127,6 +124,14 @@ public abstract class ReadWorkbook<T> extends Readable<T> {
 		}
 	}
 
+	/**
+	 * 엑셀에 존재하는 모든 시트 목록을 반환.
+	 * @return
+	 */
+	protected List<Sheet> getAllSheets() {
+		return super.sheetList;
+	}
+	
 	/**
 	 * @ExcelSheet 에서 읽을 시작 행 번호를 조회.
 	 */
@@ -142,11 +147,11 @@ public abstract class ReadWorkbook<T> extends Readable<T> {
 	 * 시트명이 없을 경우 첫 번째 시트를 추출한다.
 	 * @return
 	 */
-	private Sheet getSheet() {
+	protected Sheet getSheet() {
 		if (this.sheetName == null || this.sheetName.length() == 0) {
-			return this.workbook.getSheetAt(0);
+			return super.workbook.getSheetAt(0);
 		}
-		return this.workbook.getSheet(this.sheetName);
+		return super.workbook.getSheet(this.sheetName);
 	}
 
 	/**
@@ -168,21 +173,31 @@ public abstract class ReadWorkbook<T> extends Readable<T> {
 	}
 
 	/**
-	 * 엑셀 워크북의 시트를 읽어 리스트로 변환.
+	 * @ExcelSheet 에 정의한 시트명과 행번호 부터 데이터를 읽어온다.
 	 * @return 시트의 내용.
 	 */
 	protected List<T> setValueInExcel() {
+		return setValueInExcel(super.sheet, this.startRow);
+	}
+	
+	/**
+	 * 엑셀 워크북의 시트를 읽어 리스트로 변환.
+	 * @param sheet 읽으려는 시트
+	 * @param startRow 시트에서 읽기 시작할 행 번호
+	 * @return 시트의 내용.
+	 */
+	protected List<T> setValueInExcel(Sheet sheet, int startRow) {
 		List<T> list = new ArrayList<>();
 		Map<String, String> fieldAnnotations = this.extractFieldAnnotation();
+		
+		for (int i = startRow; i < sheet.getPhysicalNumberOfRows(); i++) {
+			Row row = sheet.getRow(i);
+			int physicalNumberOfCells = row.getPhysicalNumberOfCells();
 
-		for (int i = this.startRow; i < this.physicalNumberOfRows; i++) {
-			Row row = super.sheet.getRow(i);
-			this.physicalNumberOfCells = row.getPhysicalNumberOfCells();
-
-			T newInstance = InstanceUtil.createInstance(resultClass);
+			T newInstance = InstanceUtil.createInstance(super.resultClass);
 			list.add(newInstance);
 
-			for (int c = 0; c < this.physicalNumberOfCells; c++) {
+			for (int c = 0; c < physicalNumberOfCells; c++) {
 				Cell cell = row.getCell(c);
 				String cellName = CellReference.convertNumToColString(cell != null ? cell.getColumnIndex() : c);
 				cellName = cellName.replace("[0-9]+", "");

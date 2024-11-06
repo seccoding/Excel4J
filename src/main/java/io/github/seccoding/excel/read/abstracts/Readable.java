@@ -2,6 +2,7 @@ package io.github.seccoding.excel.read.abstracts;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.List;
 
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -21,6 +22,11 @@ public abstract class Readable<T> {
 	 * @ExcelSheet 의 value에 해당하는 시트를 읽는다.
 	 */
 	protected Sheet sheet;
+	
+	/**
+	 * 읽으려는 엑셀 파일에 존재하는 모든 시트 목록
+	 */
+	protected List<Sheet> sheetList;
 	
 	/**
 	 * 엑셀 시트 Row의 내용을 할당할 클래스 원본
