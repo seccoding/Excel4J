@@ -30,7 +30,8 @@ public class Write<T> extends WriteBody<T> {
 	 * @param data 새로운 시트에 작성할 리스트 인스턴스
 	 */
 	public void appendNewSheet(String sheetName, List<T> data) {
-		this.appendNewSheet(sheetName, 0, super.dataClass, data);
+		super.extractSheetName(super.dataClass); 
+		this.appendNewSheet(sheetName, super.writeStartRow, super.dataClass, data);
 	}
 	
 	/**
